@@ -1122,6 +1122,192 @@ input, textarea, select { font-family: inherit; }
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* SATISFACTION & WORK LOG */
+.satisfaction-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--sage-soft);
+  color: var(--sage);
+}
+.satisfaction-badge.low { background: var(--rose-soft); color: var(--rose); }
+.satisfaction-badge.mid { background: var(--amber-soft); color: var(--amber); }
+
+.work-log-section {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+}
+.work-log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.work-log-stats {
+  font-size: 11px;
+  color: var(--ink-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.work-log-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.work-log-entry {
+  background: var(--bg-elevated);
+  border-left: 2px solid var(--sage);
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.work-log-date {
+  font-size: 10px;
+  color: var(--ink-muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.work-log-note {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.work-log-left {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--line);
+  font-style: italic;
+}
+.work-log-left strong { color: var(--ink-soft); font-style: normal; }
+.work-log-delete {
+  background: none; border: none; cursor: pointer;
+  color: var(--ink-muted); font-size: 14px; padding: 0 4px;
+}
+.work-log-delete:hover { color: var(--rose); }
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Restructured task add form */
+.add-form-redesigned .add-row-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.add-form-redesigned .add-row-controls .add-select {
+  flex: 1;
+  min-width: 0;
+}
+.add-form-redesigned .add-row-input {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+@media (max-width: 768px) {
+  .add-form-redesigned .add-row-input { flex-wrap: nowrap; }
+}
+
+/* Rating selector (1-10) */
+.rating-selector {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.rating-pill {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--bg-card);
+  color: var(--ink-muted);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.rating-pill:hover { border-color: var(--ink); }
+.rating-pill.selected {
+  background: var(--ink);
+  color: var(--bg-elevated);
+  border-color: var(--ink);
+}
+.rating-pill.clear {
+  width: auto; padding: 0 10px; font-size: 10px;
+  color: var(--ink-muted);
+}
+
+/* Clickable stat cards */
+.stat-card.clickable { cursor: pointer; }
+.stat-card.clickable:active { transform: translateY(0); }
+
+/* Quick capture with bucket selector */
+.qc-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: stretch; }
+.qc-input { flex: 1; min-width: 200px; }
+.qc-bucket-select {
+  font-size: 13px;
+  padding: 12px 12px;
+  border: 1px solid var(--plum-soft);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  cursor: pointer;
+  outline: none;
+  max-width: 200px;
+}
+@media (max-width: 768px) {
+  .qc-form { flex-direction: column; }
+  .qc-bucket-select { max-width: 100%; }
+}
+
+/* Idea filter chips */
+.filter-chips {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.filter-chip {
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--bg-card);
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.filter-chip:hover { border-color: var(--ink-muted); }
+.filter-chip.active {
+  background: var(--ink);
+  color: var(--bg-elevated);
+  border-color: var(--ink);
+}
+
 /* Mobile menu drawer */
 .mobile-menu {
   position: fixed;
@@ -1403,10 +1589,11 @@ let state = {
   currentProject: null,
   currentProjectTab: 'tasks',
   collapsedBuckets: {},
+  ideaFilter: 'all',
   lastModified: 0
 };
 
-const STORAGE_KEY = 'atlas-hub-data-v3';
+const STORAGE_KEY = 'atlas-hub-data-v4';
 const SETTINGS_KEY = 'atlas-settings-v1';
 
 // ============ WORKER-BASED SYNC STATE ============
@@ -1457,8 +1644,8 @@ function loadAll() {
         lastModified: data.lastModified || 0
       });
     }
-    // Migrate from v1/v2
-    ['atlas-hub-data-v1', 'atlas-hub-data-v2'].forEach(oldKey => {
+    // Migrate from v1/v2/v3
+    ['atlas-hub-data-v1', 'atlas-hub-data-v2', 'atlas-hub-data-v3'].forEach(oldKey => {
       const old = localStorage.getItem(oldKey);
       if (old && !raw) {
         const data = JSON.parse(old);
@@ -1472,6 +1659,15 @@ function loadAll() {
         });
         saveLocal();
       }
+    });
+    // Backfill new fields for v3 → v4 migration
+    state.tasks.forEach(t => {
+      if (t.satisfaction === undefined) t.satisfaction = null;
+      if (!t.workLog) t.workLog = [];
+    });
+    state.projects.forEach(p => {
+      if (p.satisfaction === undefined) p.satisfaction = null;
+      if (!p.workLog) p.workLog = [];
     });
   } catch (e) {
     console.error('Load failed:', e);
@@ -1791,6 +1987,200 @@ function getCurrentDate() {
 }
 function isMobile() { return window.innerWidth <= 768; }
 
+// ============ SATISFACTION & WORK LOG HELPERS ============
+function satisfactionClass(s) {
+  if (s == null) return '';
+  if (s <= 3) return 'low';
+  if (s <= 6) return 'mid';
+  return '';
+}
+
+function renderRatingSelector(currentValue, onChange) {
+  let html = '<div class="rating-selector">';
+  for (let i = 1; i <= 10; i++) {
+    html += `<button class="rating-pill ${currentValue === i ? 'selected' : ''}" onclick="${onChange}(${i})">${i}</button>`;
+  }
+  html += `<button class="rating-pill clear" onclick="${onChange}(null)">Clear</button>`;
+  html += '</div>';
+  return html;
+}
+
+function todayStr() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function workLogStats(log) {
+  if (!log || log.length === 0) return { count: 0, streak: 0, workedToday: false };
+  const days = new Set(log.map(e => e.date));
+  const today = todayStr();
+  const workedToday = days.has(today);
+  // Calculate streak (consecutive days ending today or yesterday)
+  let streak = 0;
+  let cursor = new Date();
+  if (!workedToday) {
+    // Allow starting from yesterday so streak doesn't reset just because today not done yet
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  while (true) {
+    const d = cursor.toISOString().split('T')[0];
+    if (days.has(d)) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    } else break;
+  }
+  return { count: days.size, streak, workedToday };
+}
+
+// type: 'task' or 'project', id: entity id
+function openWorkLogModal(type, id) {
+  const entity = type === 'task'
+    ? state.tasks.find(t => t.id === id)
+    : state.projects.find(p => p.id === id);
+  if (!entity) return;
+
+  showModal(`
+    <h3>Log work session</h3>
+    <div style="font-size:13px;color:var(--ink-soft);margin-bottom:14px">
+      <strong>${escapeHtml(entity.title)}</strong>
+    </div>
+    <div class="field">
+      <label>Date</label>
+      <input type="date" id="wl-date" value="${todayStr()}" />
+    </div>
+    <div class="field">
+      <label>What did you work on / learn? (optional)</label>
+      <textarea id="wl-note" placeholder="Leave blank for a quick log, or capture progress, learnings, decisions..."></textarea>
+    </div>
+    <div class="field">
+      <label>What's left? (optional)</label>
+      <textarea id="wl-left" placeholder="Next steps, blockers, what to tackle next..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-secondary" onclick="quickLog('${type}', '${id}')">Quick log (just date)</button>
+      <button class="btn-primary" onclick="saveWorkLog('${type}', '${id}')">Save with notes</button>
+    </div>
+  `);
+  setTimeout(() => document.getElementById('wl-note')?.focus(), 50);
+}
+
+function quickLog(type, id) {
+  const entity = type === 'task'
+    ? state.tasks.find(t => t.id === id)
+    : state.projects.find(p => p.id === id);
+  if (!entity) return;
+  entity.workLog = entity.workLog || [];
+  const date = document.getElementById('wl-date')?.value || todayStr();
+  entity.workLog.unshift({ date, note: '', left: '', mode: 'simple', logged: Date.now() });
+  saveAll();
+  closeModal();
+  showToast('Logged');
+  render();
+}
+
+function saveWorkLog(type, id) {
+  const entity = type === 'task'
+    ? state.tasks.find(t => t.id === id)
+    : state.projects.find(p => p.id === id);
+  if (!entity) return;
+  entity.workLog = entity.workLog || [];
+  const date = document.getElementById('wl-date').value || todayStr();
+  const note = document.getElementById('wl-note').value.trim();
+  const left = document.getElementById('wl-left').value.trim();
+  entity.workLog.unshift({ date, note, left, mode: 'detailed', logged: Date.now() });
+  saveAll();
+  closeModal();
+  showToast('Work session saved');
+  render();
+}
+
+function deleteWorkLogEntry(type, id, idx) {
+  const entity = type === 'task'
+    ? state.tasks.find(t => t.id === id)
+    : state.projects.find(p => p.id === id);
+  if (!entity || !entity.workLog) return;
+  entity.workLog.splice(idx, 1);
+  saveAll();
+  render();
+}
+
+function renderWorkLog(type, id, entity) {
+  const log = entity.workLog || [];
+  const stats = workLogStats(log);
+  return `
+    <div class="work-log-section">
+      <div class="work-log-header">
+        <div class="work-log-stats">
+          ${stats.count} day${stats.count !== 1 ? 's' : ''} worked
+          ${stats.streak > 0 ? `<span class="streak-badge" style="margin-left:8px">🔥 ${stats.streak} day streak</span>` : ''}
+          ${stats.workedToday ? `<span class="streak-badge" style="margin-left:8px;background:var(--sage-soft);color:var(--sage)">✓ Today</span>` : ''}
+        </div>
+        <div class="work-log-actions">
+          <button class="btn-secondary" onclick="openWorkLogModal('${type}', '${id}')">+ Log session</button>
+        </div>
+      </div>
+      ${log.length === 0
+        ? `<div style="font-size:12px;color:var(--ink-muted);font-style:italic;padding:6px 0">No work sessions logged yet.</div>`
+        : log.slice(0, 20).map((e, i) => `
+          <div class="work-log-entry">
+            <div class="work-log-date">
+              <span>${fmtDateTime(e.date)}${e.mode === 'simple' ? ' · quick log' : ''}</span>
+              <button class="work-log-delete" onclick="deleteWorkLogEntry('${type}', '${id}', ${i})">×</button>
+            </div>
+            ${e.note ? `<div class="work-log-note">${escapeHtml(e.note)}</div>` : ''}
+            ${e.left ? `<div class="work-log-left"><strong>What's left:</strong> ${escapeHtml(e.left)}</div>` : ''}
+          </div>
+        `).join('')
+      }
+      ${log.length > 20 ? `<div style="font-size:11px;color:var(--ink-muted);text-align:center;padding:8px;font-style:italic">Showing 20 most recent of ${log.length}</div>` : ''}
+    </div>
+  `;
+}
+
+// Set satisfaction (called from rating pills in modals)
+let _ratingTarget = null; // {type, id, field}
+function setRating(value) {
+  if (!_ratingTarget) return;
+  const { type, id, field } = _ratingTarget;
+  const entity = type === 'task'
+    ? state.tasks.find(t => t.id === id)
+    : state.projects.find(p => p.id === id);
+  if (!entity) return;
+  entity[field] = value;
+  saveAll();
+  // Re-render the rating selector inline
+  const container = document.getElementById('rating-container');
+  if (container) {
+    container.innerHTML = renderRatingSelector(value, 'setRating');
+  }
+}
+
+function openSatisfactionModal(type, id) {
+  const entity = type === 'task'
+    ? state.tasks.find(t => t.id === id)
+    : state.projects.find(p => p.id === id);
+  if (!entity) return;
+  _ratingTarget = { type, id, field: 'satisfaction' };
+  showModal(`
+    <h3>How satisfied with this?</h3>
+    <div style="font-size:13px;color:var(--ink-soft);margin-bottom:14px">
+      <strong>${escapeHtml(entity.title)}</strong>
+    </div>
+    <div class="field">
+      <label>Satisfaction (1 = unhappy, 10 = thrilled)</label>
+      <div id="rating-container">${renderRatingSelector(entity.satisfaction, 'setRating')}</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="closeModalAndRender()">Done</button>
+    </div>
+  `);
+}
+
+function closeModalAndRender() {
+  closeModal();
+  render();
+}
+
 // ============ RENDER ============
 function render() {
   updateCounts();
@@ -1873,6 +2263,12 @@ function renderDashboard() {
   const upcomingProjects = state.projects.filter(p => p.deadline && !isOverdue(p.deadline) && !p.parentId).sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).slice(0,3);
   const recentIdeas = [...state.ideas].sort((a,b) => b.created - a.created).slice(0, 3);
 
+  // What did I work on today?
+  const today = todayStr();
+  const workedTodayProjects = state.projects.filter(p => (p.workLog || []).some(e => e.date === today));
+  const workedTodayTasks = state.tasks.filter(t => (t.workLog || []).some(e => e.date === today));
+  const workedTodayCount = workedTodayProjects.length + workedTodayTasks.length;
+
   return `
     <div class="header">
       <div class="header-left">
@@ -1885,22 +2281,22 @@ function renderDashboard() {
     </div>
 
     <div class="stats-grid">
-      <div class="stat-card accent">
+      <div class="stat-card accent clickable" onclick="setView('tasks')">
         <div class="stat-label">Due Today</div>
         <div class="stat-value">${todayTasks.length}</div>
         <div class="stat-sub">on your plate</div>
       </div>
-      <div class="stat-card rose">
+      <div class="stat-card rose clickable" onclick="setView('tasks')">
         <div class="stat-label">Overdue</div>
         <div class="stat-value">${overdueTasks.length}</div>
         <div class="stat-sub">need attention</div>
       </div>
-      <div class="stat-card indigo">
+      <div class="stat-card indigo clickable" onclick="setView('long')">
         <div class="stat-label">Projects</div>
         <div class="stat-value">${state.projects.filter(p=>!p.parentId).length}</div>
         <div class="stat-sub">in motion</div>
       </div>
-      <div class="stat-card plum">
+      <div class="stat-card plum clickable" onclick="setView('ideas')">
         <div class="stat-label">Ideas</div>
         <div class="stat-value">${state.ideas.length}</div>
         <div class="stat-sub">across ${state.buckets.length} buckets</div>
@@ -1909,11 +2305,51 @@ function renderDashboard() {
 
     <div class="quick-capture">
       <div class="quick-capture-label">⚡ Quick capture</div>
-      <div class="add-row">
-        <input class="add-input" id="quick-idea" placeholder="Drop a fleeting idea..." />
+      <div class="qc-form">
+        <input class="add-input qc-input" id="quick-idea" placeholder="Drop a fleeting idea..." />
+        <select class="qc-bucket-select" id="quick-bucket">
+          <option value="">No bucket</option>
+          ${state.buckets.map(b => `<option value="${b.id}">${escapeHtml(b.title)}</option>`).join('')}
+          <option value="__new__">+ New bucket...</option>
+        </select>
         <button class="btn-primary" onclick="quickCaptureIdea()">Capture</button>
       </div>
     </div>
+
+    ${workedTodayCount > 0 ? `
+      <div class="section-title" style="margin-top: 24px;">
+        Worked on today
+        <div class="section-title-actions">
+          <span style="font-size:11px;color:var(--ink-muted);font-weight:500">${workedTodayCount} ${workedTodayCount === 1 ? 'item' : 'items'}</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${workedTodayProjects.map(p => {
+          const stats = workLogStats(p.workLog);
+          const todayEntry = (p.workLog || []).find(e => e.date === today);
+          return `
+            <div class="subproject" data-project="${p.id}" style="border-left:3px solid var(--sage)">
+              <div class="subproject-info">
+                <div class="subproject-title">📁 ${escapeHtml(p.title)}</div>
+                <div class="subproject-stats">${stats.streak > 1 ? `🔥 ${stats.streak}-day streak · ` : ''}${todayEntry?.note ? escapeHtml(todayEntry.note.substring(0, 80) + (todayEntry.note.length > 80 ? '...' : '')) : 'Logged today'}</div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+        ${workedTodayTasks.map(t => {
+          const stats = workLogStats(t.workLog);
+          const todayEntry = (t.workLog || []).find(e => e.date === today);
+          return `
+            <div class="subproject" style="border-left:3px solid var(--sage)" onclick="setView('tasks')">
+              <div class="subproject-info">
+                <div class="subproject-title">✓ ${escapeHtml(t.title)}</div>
+                <div class="subproject-stats">${stats.streak > 1 ? `🔥 ${stats.streak}-day streak · ` : ''}${todayEntry?.note ? escapeHtml(todayEntry.note.substring(0, 80) + (todayEntry.note.length > 80 ? '...' : '')) : 'Logged today'}</div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    ` : ''}
 
     <div class="section-title">
       Today's Focus
@@ -1935,7 +2371,7 @@ function renderDashboard() {
       </div>
       ${recentIdeas.map(i => {
         const bucket = state.buckets.find(b => b.id === i.bucketId);
-        return `<div class="idea-item" style="background:var(--bg-card);border:1px solid var(--line)">
+        return `<div class="idea-item" style="background:var(--bg-card);border:1px solid var(--line);cursor:pointer" onclick="setView('ideas')">
           <div class="idea-content">
             ${escapeHtml(i.content)}
             ${bucket ? `<div class="idea-date">${escapeHtml(bucket.title)} · ${fmtDateTime(i.created)}</div>` : `<div class="idea-date">${fmtDateTime(i.created)}</div>`}
@@ -1971,10 +2407,31 @@ function quickCaptureIdea() {
   const input = document.getElementById('quick-idea');
   const content = input.value.trim();
   if (!content) return;
-  state.ideas.unshift({ id: uid(), content, bucketId: null, created: Date.now() });
+  const bucketSel = document.getElementById('quick-bucket');
+  let bucketId = bucketSel?.value || null;
+
+  // Handle inline bucket creation
+  if (bucketId === '__new__') {
+    const newName = prompt('New bucket name:');
+    if (!newName || !newName.trim()) {
+      bucketSel.value = '';
+      return;
+    }
+    const newBucket = {
+      id: uid(),
+      title: newName.trim(),
+      description: '',
+      created: Date.now()
+    };
+    state.buckets.push(newBucket);
+    bucketId = newBucket.id;
+  }
+  if (bucketId === '') bucketId = null;
+
+  state.ideas.unshift({ id: uid(), content, bucketId, created: Date.now() });
   saveAll();
   input.value = '';
-  showToast('Idea captured');
+  showToast(bucketId ? 'Idea captured to bucket' : 'Idea captured');
   render();
 }
 
@@ -2000,12 +2457,8 @@ function renderTasks() {
       </div>
     </div>
 
-    <div class="add-form">
-      <div class="add-row">
-        <input class="add-input" id="task-input" placeholder="What needs doing?" />
-        <button class="btn-primary" onclick="addTask()">Add</button>
-      </div>
-      <div class="add-controls">
+    <div class="add-form add-form-redesigned">
+      <div class="add-row-controls">
         <select class="add-select" id="task-priority">
           <option value="">Priority</option>
           <option value="high">High</option>
@@ -2017,6 +2470,10 @@ function renderTasks() {
           ${state.projects.map(p => `<option value="${p.id}">${escapeHtml(p.title)}</option>`).join('')}
         </select>
         <input type="date" class="add-select" id="task-due" />
+      </div>
+      <div class="add-row-input">
+        <input class="add-input" id="task-input" placeholder="What needs doing?" />
+        <button class="btn-primary" onclick="addTask()">Add</button>
       </div>
     </div>
 
@@ -2037,8 +2494,10 @@ function renderTasks() {
   `;
 }
 
-function renderTaskRow(t) {
+function renderTaskRow(t, opts = {}) {
   const project = t.projectId ? state.projects.find(p => p.id === t.projectId) : null;
+  const stats = workLogStats(t.workLog);
+  const showActions = opts.showActions !== false; // default true
   return `
     <div class="task ${t.done ? 'done' : ''}">
       <div class="checkbox ${t.done ? 'checked' : ''}" data-task="${t.id}"></div>
@@ -2048,11 +2507,20 @@ function renderTaskRow(t) {
           ${t.priority ? `<span class="task-tag tag-priority-${t.priority}">${t.priority === 'med' ? 'medium' : t.priority}</span>` : ''}
           ${project ? `<span class="task-tag tag-project">${escapeHtml(project.title)}</span>` : ''}
           ${t.due ? `<span class="task-tag tag-due ${isOverdue(t.due) && !t.done ? 'overdue' : ''}">${fmtDate(t.due)}${isOverdue(t.due) && !t.done ? ' · overdue' : ''}</span>` : ''}
+          ${t.satisfaction != null ? `<span class="satisfaction-badge ${satisfactionClass(t.satisfaction)}" title="Satisfaction">★ ${t.satisfaction}/10</span>` : ''}
+          ${stats.count > 0 ? `<span class="task-tag" style="background:var(--sage-soft);color:var(--sage)" title="Work sessions">⏱ ${stats.count}d${stats.streak > 1 ? ` · 🔥${stats.streak}` : ''}</span>` : ''}
         </div>
       </div>
-      <button class="task-delete" data-del-task="${t.id}" title="Delete">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-      </button>
+      ${showActions ? `
+        <div class="note-actions" style="display:flex;gap:2px;align-items:center">
+          <button class="note-action" onclick="event.stopPropagation();openWorkLogModal('task','${t.id}')" title="Log work">⏱</button>
+          <button class="note-action" onclick="event.stopPropagation();openSatisfactionModal('task','${t.id}')" title="Rate satisfaction">★</button>
+          <button class="note-action" onclick="event.stopPropagation();openAIExport('task:${t.id}')" title="Export to AI">↗</button>
+          <button class="task-delete" data-del-task="${t.id}" title="Delete">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        </div>
+      ` : ''}
     </div>
   `;
 }
@@ -2080,7 +2548,8 @@ function addTask() {
     priority: document.getElementById('task-priority').value || null,
     projectId: document.getElementById('task-project').value || null,
     due: document.getElementById('task-due').value || null,
-    done: false, created: Date.now()
+    done: false, created: Date.now(),
+    satisfaction: null, workLog: []
   });
   saveAll(); render();
 }
@@ -2136,16 +2605,18 @@ function renderProjectCard(p) {
   const daysLeft = p.deadline ? daysFromNow(p.deadline) : null;
   const notes = (p.notes || []).length;
   const links = (p.links || []).length;
+  const stats = workLogStats(p.workLog);
 
   return `
     <div class="project-card ${p.type}" data-project="${p.id}">
-      <div class="project-type">${p.type === 'long' ? 'Long Term' : 'Short Term'}${p.parentId ? ' · Sub' : ''}</div>
+      <div class="project-type">${p.type === 'long' ? 'Long Term' : 'Short Term'}${p.parentId ? ' · Sub' : ''}${p.satisfaction != null ? ` · ★${p.satisfaction}/10` : ''}</div>
       <div class="project-title">${escapeHtml(p.title)}</div>
       <div class="project-desc">${escapeHtml(p.description || 'No description')}</div>
       <div class="project-stats">
         <span><strong>${allTasks.length}</strong> tasks</span>
         ${notes > 0 ? `<span><strong>${notes}</strong> notes</span>` : ''}
         ${links > 0 ? `<span><strong>${links}</strong> links</span>` : ''}
+        ${stats.count > 0 ? `<span><strong>${stats.count}d</strong> worked${stats.streak > 1 ? ` · 🔥${stats.streak}` : ''}</span>` : ''}
         ${subprojects.length > 0 ? `<span><strong>${subprojects.length}</strong> sub</span>` : ''}
         ${daysLeft !== null ? `<span><strong>${daysLeft >= 0 ? daysLeft + 'd' : 'overdue'}</strong></span>` : ''}
         <span style="margin-left:auto"><strong>${progress}%</strong></span>
@@ -2267,7 +2738,11 @@ function renderProjectDetail() {
         }).join('')}</div>
         <div style="margin-top:14px"><button class="btn-secondary" onclick="openProjectModal('${p.type}', '${p.id}')">+ Add Sub-project</button></div>
       `;
+  } else if (tab === 'worklog') {
+    tabContent = renderWorkLog('project', p.id, p);
   }
+
+  const pStats = workLogStats(p.workLog);
 
   return `
     <button class="back-btn" onclick="${parent ? `openProject('${parent.id}')` : `setView('${p.type}')`}">← ${parent ? escapeHtml(parent.title) : (p.type === 'long' ? 'Long term' : 'Short term')}</button>
@@ -2280,9 +2755,13 @@ function renderProjectDetail() {
         <div>📊 ${done}/${allTasks.length} tasks · ${progress}%</div>
         ${p.deadline ? `<div>📅 ${fmtDate(p.deadline)}${daysLeft !== null ? ` (${daysLeft >= 0 ? daysLeft + ' days' : 'overdue'})` : ''}</div>` : ''}
         ${p.estimate ? `<div>⏱ ${escapeHtml(p.estimate)}</div>` : ''}
+        ${p.satisfaction != null ? `<div>★ ${p.satisfaction}/10 satisfaction</div>` : ''}
+        ${pStats.count > 0 ? `<div>⏱ ${pStats.count} day${pStats.count!==1?'s':''} worked${pStats.streak > 1 ? ` · 🔥 ${pStats.streak} streak` : ''}</div>` : ''}
       </div>
       <div class="progress-bar" style="margin-top: 16px;"><div class="progress-fill" style="width:${progress}%; background:${p.type==='long'?'var(--indigo)':'var(--accent)'}"></div></div>
       <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
+        <button class="btn-secondary" onclick="openWorkLogModal('project','${p.id}')">⏱ Log session</button>
+        <button class="btn-secondary" onclick="openSatisfactionModal('project','${p.id}')">★ Rate</button>
         <button class="btn-secondary btn-ai" onclick="openAIExport('project:${p.id}')">↗ Send to AI</button>
         <button class="btn-secondary" onclick="editProject('${p.id}')">Edit</button>
         <button class="btn-secondary" onclick="deleteProject('${p.id}')" style="color:var(--rose); margin-left:auto;">Delete</button>
@@ -2293,6 +2772,7 @@ function renderProjectDetail() {
       <button class="tab ${tab==='tasks'?'active':''}" data-tab="tasks">Tasks <span class="tab-count">${directTasks.length}</span></button>
       <button class="tab ${tab==='notes'?'active':''}" data-tab="notes">Notes <span class="tab-count">${notes.length}</span></button>
       <button class="tab ${tab==='links'?'active':''}" data-tab="links">Links <span class="tab-count">${links.length}</span></button>
+      <button class="tab ${tab==='worklog'?'active':''}" data-tab="worklog">Work Log <span class="tab-count">${(p.workLog||[]).length}</span></button>
       <button class="tab ${tab==='sub'?'active':''}" data-tab="sub">Sub <span class="tab-count">${subprojects.length}</span></button>
     </div>
 
@@ -2326,7 +2806,11 @@ function addProjectTask(projectId) {
   const inp = document.getElementById('ptask-input');
   const title = inp.value.trim();
   if (!title) return;
-  state.tasks.unshift({ id: uid(), title, projectId, priority: null, due: null, done: false, created: Date.now() });
+  state.tasks.unshift({
+    id: uid(), title, projectId,
+    priority: null, due: null, done: false, created: Date.now(),
+    satisfaction: null, workLog: []
+  });
   saveAll(); render();
 }
 function addProjectNote(projectId) {
@@ -2394,6 +2878,7 @@ function createProject(type, parentId) {
     deadline: document.getElementById('m-deadline').value || null,
     estimate: document.getElementById('m-estimate').value.trim() || null,
     notes: [], links: [],
+    satisfaction: null, workLog: [],
     created: Date.now()
   });
   saveAll(); closeModal(); render();
@@ -2446,6 +2931,7 @@ function deleteProject(id) {
 // ============ IDEAS ============
 function renderIdeas() {
   const unbucketed = state.ideas.filter(i => !i.bucketId);
+  const filter = state.ideaFilter || 'all';
 
   return `
     <div class="header">
@@ -2468,61 +2954,101 @@ function renderIdeas() {
         <select class="add-select" id="idea-bucket" style="flex:1">
           <option value="">No bucket</option>
           ${state.buckets.map(b => `<option value="${b.id}">${escapeHtml(b.title)}</option>`).join('')}
+          <option value="__new__">+ New bucket...</option>
         </select>
       </div>
     </div>
 
-    ${state.buckets.map(b => {
-      const ideas = state.ideas.filter(i => i.bucketId === b.id).sort((a,b) => b.created - a.created);
-      const collapsed = state.collapsedBuckets[b.id];
-      return `
-        <div class="idea-bucket">
-          <div class="bucket-header" data-bucket-toggle="${b.id}">
-            <div class="bucket-title-row">
-              <div class="bucket-icon">${escapeHtml(b.title.charAt(0).toUpperCase())}</div>
-              <div class="bucket-title">${escapeHtml(b.title)}</div>
-              <div class="bucket-count">${ideas.length}</div>
-            </div>
-            <div class="bucket-actions" onclick="event.stopPropagation()">
-              <button class="bucket-toggle ${collapsed?'collapsed':''}" data-bucket-toggle="${b.id}">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-              <button class="note-action" onclick="renameBucket('${b.id}')">Edit</button>
-              <button class="note-action danger" onclick="deleteBucket('${b.id}')">×</button>
-            </div>
-          </div>
-          <div class="bucket-content ${collapsed?'collapsed':''}">
-            ${ideas.length === 0
-              ? `<div style="font-size:12px;color:var(--ink-muted);font-style:italic;padding:8px 0">No ideas in this bucket yet.</div>`
-              : ideas.map(i => `
-                <div class="idea-item">
-                  <div class="idea-content">
-                    ${escapeHtml(i.content)}
-                    <div class="idea-date">${fmtDateTime(i.created)}</div>
-                  </div>
-                  <div class="idea-actions">
-                    <button class="note-action" onclick="moveIdea('${i.id}')">Move</button>
-                    <button class="note-action danger" onclick="deleteIdea('${i.id}')">×</button>
-                  </div>
-                </div>
-              `).join('')
-            }
-          </div>
-        </div>
-      `;
-    }).join('')}
+    <div class="filter-chips">
+      <button class="filter-chip ${filter==='all'?'active':''}" onclick="setIdeaFilter('all')">All ${state.ideas.length}</button>
+      <button class="filter-chip ${filter==='unbucketed'?'active':''}" onclick="setIdeaFilter('unbucketed')">Unbucketed ${unbucketed.length}</button>
+      <button class="filter-chip ${filter==='bucketed'?'active':''}" onclick="setIdeaFilter('bucketed')">In buckets ${state.ideas.length - unbucketed.length}</button>
+    </div>
 
-    ${unbucketed.length > 0 ? `
-      <div class="idea-bucket">
-        <div class="bucket-header">
-          <div class="bucket-title-row">
-            <div class="bucket-icon" style="background:var(--line);color:var(--ink-muted)">·</div>
-            <div class="bucket-title">Unbucketed</div>
-            <div class="bucket-count">${unbucketed.length}</div>
-          </div>
+    ${filter === 'unbucketed'
+      ? renderUnbucketedOnly(unbucketed)
+      : filter === 'bucketed'
+      ? renderBucketsOnly()
+      : renderAllIdeas(unbucketed)
+    }
+
+    ${state.buckets.length === 0 && state.ideas.length === 0
+      ? `<div class="empty"><div class="empty-icon">💡</div><p>No ideas yet. Make a bucket or capture above.</p></div>`
+      : ''
+    }
+  `;
+}
+
+function setIdeaFilter(f) {
+  state.ideaFilter = f;
+  render();
+}
+
+function renderUnbucketedOnly(unbucketed) {
+  if (unbucketed.length === 0) {
+    return `<div class="empty"><div class="empty-icon">✓</div><p>All ideas are in buckets. Nice and tidy.</p></div>`;
+  }
+  return `
+    <div class="idea-bucket">
+      <div class="bucket-header">
+        <div class="bucket-title-row">
+          <div class="bucket-icon" style="background:var(--line);color:var(--ink-muted)">·</div>
+          <div class="bucket-title">Unbucketed</div>
+          <div class="bucket-count">${unbucketed.length}</div>
         </div>
-        <div class="bucket-content">
-          ${unbucketed.sort((a,b) => b.created - a.created).map(i => `
+        <div class="bucket-actions">
+          <button class="btn-secondary btn-ai" onclick="openAIExport('ideas-unbucketed')" style="font-size:11px">↗ AI</button>
+        </div>
+      </div>
+      <div class="bucket-content">
+        ${unbucketed.sort((a,b) => b.created - a.created).map(i => `
+          <div class="idea-item">
+            <div class="idea-content">
+              ${escapeHtml(i.content)}
+              <div class="idea-date">${fmtDateTime(i.created)}</div>
+            </div>
+            <div class="idea-actions">
+              <button class="note-action" onclick="moveIdea('${i.id}')">Move to bucket</button>
+              <button class="note-action danger" onclick="deleteIdea('${i.id}')">×</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderBucketsOnly() {
+  if (state.buckets.length === 0) {
+    return `<div class="empty"><div class="empty-icon">📦</div><p>No buckets yet.</p></div>`;
+  }
+  return state.buckets.map(b => renderBucketSection(b)).join('');
+}
+
+function renderBucketSection(b) {
+  const ideas = state.ideas.filter(i => i.bucketId === b.id).sort((a, c) => c.created - a.created);
+  const collapsed = state.collapsedBuckets[b.id];
+  return `
+    <div class="idea-bucket">
+      <div class="bucket-header" data-bucket-toggle="${b.id}">
+        <div class="bucket-title-row">
+          <div class="bucket-icon">${escapeHtml(b.title.charAt(0).toUpperCase())}</div>
+          <div class="bucket-title">${escapeHtml(b.title)}</div>
+          <div class="bucket-count">${ideas.length}</div>
+        </div>
+        <div class="bucket-actions" onclick="event.stopPropagation()">
+          <button class="bucket-toggle ${collapsed?'collapsed':''}" data-bucket-toggle="${b.id}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <button class="note-action" onclick="openAIExport('bucket:${b.id}')" title="Export to AI">↗</button>
+          <button class="note-action" onclick="renameBucket('${b.id}')">Edit</button>
+          <button class="note-action danger" onclick="deleteBucket('${b.id}')">×</button>
+        </div>
+      </div>
+      <div class="bucket-content ${collapsed?'collapsed':''}">
+        ${ideas.length === 0
+          ? `<div style="font-size:12px;color:var(--ink-muted);font-style:italic;padding:8px 0">No ideas in this bucket yet.</div>`
+          : ideas.map(i => `
             <div class="idea-item">
               <div class="idea-content">
                 ${escapeHtml(i.content)}
@@ -2533,15 +3059,17 @@ function renderIdeas() {
                 <button class="note-action danger" onclick="deleteIdea('${i.id}')">×</button>
               </div>
             </div>
-          `).join('')}
-        </div>
+          `).join('')
+        }
       </div>
-    ` : ''}
+    </div>
+  `;
+}
 
-    ${state.buckets.length === 0 && state.ideas.length === 0
-      ? `<div class="empty"><div class="empty-icon">💡</div><p>No ideas yet. Make a bucket or capture above.</p></div>`
-      : ''
-    }
+function renderAllIdeas(unbucketed) {
+  return `
+    ${state.buckets.map(b => renderBucketSection(b)).join('')}
+    ${unbucketed.length > 0 ? renderUnbucketedOnly(unbucketed) : ''}
   `;
 }
 
@@ -2565,7 +3093,25 @@ function addIdea() {
   const input = document.getElementById('idea-input');
   const content = input.value.trim();
   if (!content) return;
-  const bucketId = document.getElementById('idea-bucket')?.value || null;
+  const sel = document.getElementById('idea-bucket');
+  let bucketId = sel?.value || null;
+
+  // Handle inline new bucket
+  if (bucketId === '__new__') {
+    const newName = prompt('New bucket name:');
+    if (!newName || !newName.trim()) {
+      sel.value = '';
+      return;
+    }
+    const newBucket = {
+      id: uid(), title: newName.trim(),
+      description: '', created: Date.now()
+    };
+    state.buckets.push(newBucket);
+    bucketId = newBucket.id;
+  }
+  if (bucketId === '') bucketId = null;
+
   state.ideas.unshift({ id: uid(), content, bucketId, created: Date.now() });
   saveAll(); render();
 }
@@ -3001,12 +3547,18 @@ function buildMarkdown(scope) {
     md = `# My Learning Tracks\n*Generated ${today}*\n\n` + sectionLearning();
   } else if (scope === 'ideas') {
     md = `# My Idea Center\n*Generated ${today}*\n\n` + sectionIdeas();
+  } else if (scope === 'ideas-unbucketed') {
+    md = sectionUnbucketedIdeas(today);
   } else if (scope === 'wishlist') {
     md = `# My Wishlist\n*Generated ${today}*\n\n` + sectionWishlist();
   } else if (scope.startsWith('project:')) {
     md = sectionSingleProject(scope.split(':')[1], today);
   } else if (scope.startsWith('learning:')) {
     md = sectionSingleLearning(scope.split(':')[1], today);
+  } else if (scope.startsWith('bucket:')) {
+    md = sectionSingleBucket(scope.split(':')[1], today);
+  } else if (scope.startsWith('task:')) {
+    md = sectionSingleTask(scope.split(':')[1], today);
   }
   return md;
 }
@@ -3020,9 +3572,65 @@ function sectionTasks() {
     const meta = [
       t.priority && `priority: ${t.priority}`,
       t.due && `due: ${fmtDate(t.due)}${isOverdue(t.due) ? ' (OVERDUE)' : ''}`,
-      project && `project: ${project.title}`
+      project && `project: ${project.title}`,
+      t.satisfaction != null && `satisfaction: ${t.satisfaction}/10`
     ].filter(Boolean).join(', ');
     s += `- ${t.title}${meta ? ` *(${meta})*` : ''}\n`;
+    const log = t.workLog || [];
+    if (log.length > 0) {
+      const stats = workLogStats(log);
+      s += `  - *${stats.count} day${stats.count!==1?'s':''} worked${stats.streak > 1 ? `, ${stats.streak}-day streak` : ''}*\n`;
+    }
+  });
+  return s + '\n';
+}
+
+function sectionSingleTask(id, today) {
+  const t = state.tasks.find(x => x.id === id);
+  if (!t) return '';
+  const project = t.projectId ? state.projects.find(p => p.id === t.projectId) : null;
+  let s = `# Task: ${t.title}\n*Generated ${today}*\n\n`;
+  s += `**Status:** ${t.done ? 'Completed' : 'Open'}\n`;
+  if (t.priority) s += `**Priority:** ${t.priority}\n`;
+  if (project) s += `**Project:** ${project.title}\n`;
+  if (t.due) s += `**Due:** ${fmtDate(t.due)}${isOverdue(t.due) && !t.done ? ' (overdue)' : ''}\n`;
+  if (t.satisfaction != null) s += `**Satisfaction:** ${t.satisfaction}/10\n`;
+  s += `**Created:** ${fmtDateTime(t.created)}\n\n`;
+
+  const log = t.workLog || [];
+  if (log.length > 0) {
+    const stats = workLogStats(log);
+    s += `## Work Log (${stats.count} day${stats.count !== 1 ? 's' : ''}${stats.streak > 1 ? `, ${stats.streak}-day streak` : ''})\n\n`;
+    log.forEach(e => {
+      s += `### ${fmtDateTime(e.date)}${e.mode === 'simple' ? ' *(quick log)*' : ''}\n`;
+      if (e.note) s += `${e.note}\n\n`;
+      if (e.left) s += `**What's left:** ${e.left}\n\n`;
+      if (!e.note && !e.left) s += `*(date logged, no notes)*\n\n`;
+    });
+  }
+  return s;
+}
+
+function sectionSingleBucket(id, today) {
+  const b = state.buckets.find(x => x.id === id);
+  if (!b) return '';
+  const ideas = state.ideas.filter(i => i.bucketId === id).sort((a, c) => c.created - a.created);
+  let s = `# Idea Bucket: ${b.title}\n*Generated ${today}*\n\n`;
+  if (b.description) s += `${b.description}\n\n`;
+  s += `**${ideas.length} idea${ideas.length !== 1 ? 's' : ''}**\n\n`;
+  ideas.forEach(i => {
+    s += `- ${i.content.replace(/\n/g, '\n  ')} *(${fmtDateTime(i.created)})*\n`;
+  });
+  return s + '\n';
+}
+
+function sectionUnbucketedIdeas(today) {
+  const unbucketed = state.ideas.filter(i => !i.bucketId).sort((a,b) => b.created - a.created);
+  let s = `# Unbucketed Ideas\n*Generated ${today}*\n\n`;
+  if (unbucketed.length === 0) return s + '*No unbucketed ideas.*\n';
+  s += `${unbucketed.length} idea${unbucketed.length !== 1 ? 's' : ''} not yet sorted into buckets.\n\n`;
+  unbucketed.forEach(i => {
+    s += `- ${i.content.replace(/\n/g, '\n  ')} *(${fmtDateTime(i.created)})*\n`;
   });
   return s + '\n';
 }
@@ -3045,20 +3653,24 @@ function projectToMd(p, level) {
   const directTasks = state.tasks.filter(t => t.projectId === p.id);
   const notes = p.notes || [];
   const links = p.links || [];
+  const log = p.workLog || [];
+  const stats = workLogStats(log);
 
   let s = `${hash} ${p.title}\n`;
   if (p.description) s += `${p.description}\n\n`;
   const meta = [
     p.deadline && `**Deadline:** ${fmtDate(p.deadline)}`,
     p.estimate && `**Estimate:** ${p.estimate}`,
-    `**Progress:** ${done}/${allTasks.length} tasks (${progress}%)`
+    `**Progress:** ${done}/${allTasks.length} tasks (${progress}%)`,
+    p.satisfaction != null && `**Satisfaction:** ${p.satisfaction}/10`,
+    stats.count > 0 && `**Days worked:** ${stats.count}${stats.streak > 1 ? ` (${stats.streak}-day streak)` : ''}`
   ].filter(Boolean);
   if (meta.length) s += meta.join(' · ') + '\n\n';
 
   if (directTasks.length > 0) {
     s += `**Tasks:**\n`;
     directTasks.forEach(t => {
-      s += `- ${t.done ? '[x]' : '[ ]'} ${t.title}${t.priority ? ` *(${t.priority})*` : ''}${t.due ? ` *(due ${fmtDate(t.due)})*` : ''}\n`;
+      s += `- ${t.done ? '[x]' : '[ ]'} ${t.title}${t.priority ? ` *(${t.priority})*` : ''}${t.due ? ` *(due ${fmtDate(t.due)})*` : ''}${t.satisfaction != null ? ` *(★${t.satisfaction}/10)*` : ''}\n`;
     });
     s += '\n';
   }
@@ -3070,6 +3682,20 @@ function projectToMd(p, level) {
   if (links.length > 0) {
     s += `**Links:**\n`;
     links.forEach(l => { s += `- [${l.title}](${l.url})\n`; });
+    s += '\n';
+  }
+  if (log.length > 0) {
+    s += `**Work Log:**\n`;
+    log.forEach(e => {
+      const tag = e.mode === 'simple' ? ' *(quick log)*' : '';
+      if (e.note || e.left) {
+        s += `- *${fmtDateTime(e.date)}*${tag}\n`;
+        if (e.note) s += `  - ${e.note.replace(/\n/g, '\n    ')}\n`;
+        if (e.left) s += `  - **What's left:** ${e.left.replace(/\n/g, '\n    ')}\n`;
+      } else {
+        s += `- *${fmtDateTime(e.date)}*${tag}\n`;
+      }
+    });
     s += '\n';
   }
   if (subprojects.length > 0) {
@@ -3177,7 +3803,9 @@ function openAIExport(scope) {
   const titles = {
     all: 'Everything', tasks: 'Tasks',
     'projects-long': 'Long Term Projects', 'projects-short': 'Short Term Projects',
-    learning: 'Learning Tracks', ideas: 'Ideas', wishlist: 'Wishlist'
+    learning: 'Learning Tracks', ideas: 'Ideas',
+    'ideas-unbucketed': 'Unbucketed Ideas',
+    wishlist: 'Wishlist'
   };
   let title = titles[scope] || 'Selection';
   if (scope.startsWith('project:')) {
@@ -3186,6 +3814,12 @@ function openAIExport(scope) {
   } else if (scope.startsWith('learning:')) {
     const l = state.learning.find(x => x.id === scope.split(':')[1]);
     if (l) title = `Learning: ${l.title}`;
+  } else if (scope.startsWith('bucket:')) {
+    const b = state.buckets.find(x => x.id === scope.split(':')[1]);
+    if (b) title = `Bucket: ${b.title}`;
+  } else if (scope.startsWith('task:')) {
+    const t = state.tasks.find(x => x.id === scope.split(':')[1]);
+    if (t) title = `Task: ${t.title}`;
   }
 
   showModal(`
@@ -3300,13 +3934,15 @@ Object.assign(window, {
   openLearningModal, createLearning, editLearning, saveLearningEdit, deleteLearning,
   addMilestone, toggleMilestone, deleteMilestone,
   closeModal, exportData, importData, quickCaptureIdea,
-  addIdea, deleteIdea, moveIdea, confirmMoveIdea,
+  addIdea, deleteIdea, moveIdea, confirmMoveIdea, setIdeaFilter,
   openBucketModal, createBucket, renameBucket, saveBucketEdit, deleteBucket,
   openWishlistModal, createWish, editWish, saveWishEdit, toggleWish, deleteWish,
   openAIExport, copyAIExport, downloadAIExport,
   openSyncSettings, saveSyncSettings, workerSignIn, workerSignOut, manualSync,
   signInToGoogle, signOutGoogle,
-  openMobileMenu, closeMobileMenu, handleFab
+  openMobileMenu, closeMobileMenu, handleFab,
+  openWorkLogModal, quickLog, saveWorkLog, deleteWorkLogEntry,
+  openSatisfactionModal, setRating, closeModalAndRender
 });
 
 // Init
