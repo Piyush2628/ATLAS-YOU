@@ -1,0 +1,3317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f5f1ea">
+<title>Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f1ea;
+  --bg-elevated: #faf7f1;
+  --bg-card: #ffffff;
+  --ink: #1a1612;
+  --ink-soft: #4a423a;
+  --ink-muted: #8b8278;
+  --accent: #c2410c;
+  --accent-soft: #fed7aa;
+  --sage: #5a7a5a;
+  --sage-soft: #d4e4d4;
+  --rose: #b8456b;
+  --rose-soft: #fbd5e0;
+  --indigo: #4c5b8c;
+  --indigo-soft: #d6dcef;
+  --amber: #b8821a;
+  --amber-soft: #fbeac0;
+  --plum: #7a4a8c;
+  --plum-soft: #e6d6ec;
+  --line: #e8e0d4;
+  --line-soft: #f0e9dc;
+  --shadow: 0 1px 2px rgba(26, 22, 18, 0.04), 0 4px 12px rgba(26, 22, 18, 0.04);
+  --shadow-lg: 0 4px 8px rgba(26, 22, 18, 0.06), 0 16px 32px rgba(26, 22, 18, 0.08);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --safe-bottom: env(safe-area-inset-bottom, 0);
+  --safe-top: env(safe-area-inset-top, 0);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+button { font-family: inherit; }
+input, textarea, select { font-family: inherit; }
+
+/* ===== DESKTOP LAYOUT ===== */
+.app {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: var(--bg-elevated);
+  border-right: 1px solid var(--line);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.brand {
+  padding: 0 12px 24px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+.brand h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+.brand p {
+  font-size: 11px;
+  color: var(--ink-muted);
+  margin-top: 2px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.nav-section { margin-top: 16px; }
+.nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--ink-soft);
+  font-weight: 500;
+  font-size: 13px;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s;
+}
+.nav-item:hover { background: rgba(0, 0, 0, 0.04); color: var(--ink); }
+.nav-item.active { background: var(--ink); color: var(--bg-elevated); }
+.nav-item.active .nav-icon { color: var(--bg-elevated); }
+.nav-icon { width: 16px; height: 16px; color: var(--ink-muted); flex-shrink: 0; }
+.nav-item:hover .nav-icon { color: var(--ink-soft); }
+.nav-count {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+.nav-item.active .nav-count { color: rgba(255,255,255,0.6); }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.footer-btn {
+  font-size: 11px;
+  background: none;
+  border: none;
+  color: var(--ink-muted);
+  cursor: pointer;
+  padding: 6px 12px;
+  text-align: left;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.footer-btn:hover { background: rgba(0,0,0,0.04); color: var(--ink); }
+
+/* Sync status indicator */
+.sync-status {
+  padding: 8px 12px;
+  font-size: 11px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  margin-bottom: 8px;
+}
+.sync-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-muted);
+  flex-shrink: 0;
+}
+.sync-dot.connected { background: var(--sage); }
+.sync-dot.syncing { background: var(--amber); animation: pulse 1.2s infinite; }
+.sync-dot.error { background: var(--rose); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.main {
+  padding: 32px 48px;
+  max-width: 1100px;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+  gap: 16px;
+}
+.header-left h2 {
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+  font-size: 38px;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+.header-left .greeting {
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin-top: 6px;
+  font-style: italic;
+  font-family: 'Fraunces', serif;
+}
+.header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.header-right { text-align: right; font-size: 12px; color: var(--ink-muted); }
+.header-right .date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+/* ===== MOBILE TOP BAR ===== */
+.mobile-topbar {
+  display: none;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--line);
+  padding: calc(var(--safe-top) + 12px) 16px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(12px);
+}
+.mobile-brand {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.mobile-actions { display: flex; gap: 8px; align-items: center; }
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+}
+.icon-btn:active { background: rgba(0,0,0,0.05); }
+
+/* ===== MOBILE BOTTOM NAV ===== */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--line);
+  padding: 8px 4px calc(var(--safe-bottom) + 8px);
+  z-index: 50;
+  backdrop-filter: blur(12px);
+}
+.bottom-nav-inner {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+}
+.bn-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-muted);
+  border-radius: var(--radius-sm);
+  position: relative;
+}
+.bn-item.active { color: var(--ink); }
+.bn-item.active::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  background: var(--ink);
+  border-radius: 0 0 3px 3px;
+}
+.bn-icon { width: 22px; height: 22px; }
+.bn-label { font-size: 10px; font-weight: 500; letter-spacing: 0.02em; }
+
+/* ===== FAB (mobile floating action button) ===== */
+.fab {
+  display: none;
+  position: fixed;
+  right: 18px;
+  bottom: calc(var(--safe-bottom) + 80px);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--bg-elevated);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  z-index: 40;
+  align-items: center;
+  justify-content: center;
+}
+.fab svg { width: 24px; height: 24px; }
+.fab:active { transform: scale(0.95); }
+
+/* ===== STATS GRID ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  transition: all 0.2s;
+}
+.stat-card:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.stat-label {
+  font-size: 11px;
+  color: var(--ink-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.stat-value {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  font-weight: 400;
+  margin-top: 6px;
+  letter-spacing: -0.02em;
+}
+.stat-sub { font-size: 11px; color: var(--ink-muted); margin-top: 2px; }
+.stat-card.accent .stat-value { color: var(--accent); }
+.stat-card.sage .stat-value { color: var(--sage); }
+.stat-card.rose .stat-value { color: var(--rose); }
+.stat-card.indigo .stat-value { color: var(--indigo); }
+.stat-card.plum .stat-value { color: var(--plum); }
+.stat-card.amber .stat-value { color: var(--amber); }
+
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.section-title-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.section-title button {
+  font-size: 12px;
+  font-weight: 500;
+  background: none;
+  border: 1px solid var(--line);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--ink-soft);
+  transition: all 0.15s;
+}
+.section-title button:hover {
+  background: var(--ink);
+  color: var(--bg-elevated);
+  border-color: var(--ink);
+}
+
+/* ===== TASKS ===== */
+.task-list {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.task {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line-soft);
+  transition: background 0.15s;
+}
+.task:last-child { border-bottom: none; }
+.task:hover { background: var(--bg-elevated); }
+.task.done { opacity: 0.55; }
+.task.done .task-title { text-decoration: line-through; }
+.checkbox {
+  width: 22px; height: 22px;
+  border: 1.5px solid var(--ink-muted);
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 1px;
+  position: relative;
+  transition: all 0.15s;
+}
+.checkbox:hover { border-color: var(--ink); }
+.checkbox.checked { background: var(--sage); border-color: var(--sage); }
+.checkbox.checked::after {
+  content: '';
+  position: absolute;
+  left: 6px; top: 2px;
+  width: 6px; height: 11px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.task-content { flex: 1; min-width: 0; }
+.task-title { font-size: 14px; font-weight: 500; word-break: break-word; }
+.task-meta {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--ink-muted);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.task-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 500;
+}
+.tag-priority-high { background: var(--rose-soft); color: var(--rose); }
+.tag-priority-med { background: var(--amber-soft); color: var(--amber); }
+.tag-priority-low { background: var(--sage-soft); color: var(--sage); }
+.tag-project { background: var(--indigo-soft); color: var(--indigo); }
+.tag-due { background: var(--accent-soft); color: var(--accent); }
+.tag-due.overdue { background: var(--rose-soft); color: var(--rose); }
+.task-delete {
+  opacity: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-muted);
+  padding: 6px;
+  transition: all 0.15s;
+}
+.task:hover .task-delete { opacity: 1; }
+.task-delete:hover { color: var(--rose); }
+
+.add-form {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.add-row { display: flex; gap: 10px; align-items: center; }
+.add-input {
+  flex: 1;
+  font-size: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  outline: none;
+  color: var(--ink);
+  width: 100%;
+}
+.add-input:focus { border-color: var(--ink); background: var(--bg-card); }
+.add-controls { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.add-select {
+  font-size: 13px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--ink-soft);
+  cursor: pointer;
+  outline: none;
+}
+.btn-primary {
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--ink);
+  color: var(--bg-elevated);
+  border: none;
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-primary:hover { background: #2d2620; }
+.btn-secondary {
+  font-size: 12px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.btn-secondary:hover { background: var(--bg-elevated); }
+.btn-ai {
+  background: var(--plum-soft);
+  color: var(--plum);
+  border: 1px solid var(--plum-soft);
+}
+.btn-ai:hover { background: var(--plum); color: white; border-color: var(--plum); }
+
+/* ===== PROJECTS ===== */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.project-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.project-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.project-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--accent);
+}
+.project-card.long::before { background: var(--indigo); }
+.project-card.short::before { background: var(--accent); }
+.project-type {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.project-title {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.project-desc {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-bottom: 14px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.project-stats {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 12px;
+  font-size: 11px;
+  color: var(--ink-muted);
+  flex-wrap: wrap;
+}
+.project-stats strong { color: var(--ink); font-weight: 600; }
+.progress-bar {
+  height: 4px;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill { height: 100%; border-radius: 2px; transition: width 0.3s; background: var(--ink); }
+.project-card.long .progress-fill { background: var(--indigo); }
+.project-card.short .progress-fill { background: var(--accent); }
+
+/* PROJECT DETAIL */
+.back-btn {
+  font-size: 13px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-muted);
+  margin-bottom: 16px;
+  padding: 8px 0;
+}
+.back-btn:hover { color: var(--ink); }
+
+.project-detail-header {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.project-detail-header h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.project-detail-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tab {
+  font-size: 13px;
+  font-weight: 500;
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  cursor: pointer;
+  color: var(--ink-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.tab:hover { color: var(--ink-soft); }
+.tab.active { color: var(--ink); border-bottom-color: var(--ink); }
+.tab-count {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 11px;
+  background: var(--line);
+  color: var(--ink-muted);
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.tab.active .tab-count { background: var(--ink); color: var(--bg-elevated); }
+
+.subproject {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.subproject:hover { background: var(--bg-elevated); border-color: var(--ink-muted); }
+.subproject-info { flex: 1; }
+.subproject-title { font-weight: 500; font-size: 14px; margin-bottom: 2px; }
+.subproject-stats { font-size: 11px; color: var(--ink-muted); }
+.mini-progress {
+  width: 60px;
+  height: 4px;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.mini-progress-fill { height: 100%; background: var(--sage); transition: width 0.3s; }
+
+/* NOTES */
+.note-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  position: relative;
+  transition: all 0.15s;
+}
+.note-card:hover { border-color: var(--ink-muted); }
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+.note-date {
+  font-size: 10px;
+  color: var(--ink-muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+}
+.note-content {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.note-actions {
+  display: flex;
+  gap: 6px;
+}
+.note-action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-muted);
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 4px;
+}
+.note-action:hover { color: var(--ink); background: var(--bg-elevated); }
+.note-action.danger:hover { color: var(--rose); }
+
+/* LINKS */
+.link-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.15s;
+}
+.link-card:hover { border-color: var(--indigo); }
+.link-info { flex: 1; min-width: 0; }
+.link-title { font-weight: 500; font-size: 13px; margin-bottom: 2px; word-break: break-word; }
+.link-url {
+  font-size: 11px;
+  color: var(--indigo);
+  font-family: 'JetBrains Mono', monospace;
+  text-decoration: none;
+  word-break: break-all;
+}
+.link-url:hover { text-decoration: underline; }
+
+/* IDEAS */
+.idea-bucket {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.bucket-header {
+  padding: 14px 18px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+}
+.bucket-title-row { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.bucket-icon {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  background: var(--plum-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--plum);
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.bucket-title {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.bucket-count { font-size: 11px; color: var(--ink-muted); font-weight: 500; }
+.bucket-actions { display: flex; gap: 6px; align-items: center; }
+.bucket-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-muted);
+  padding: 4px;
+  transition: transform 0.2s;
+}
+.bucket-toggle.collapsed { transform: rotate(-90deg); }
+.bucket-content { padding: 14px 18px; }
+.bucket-content.collapsed { display: none; }
+
+.idea-item {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  background: var(--bg-elevated);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  transition: background 0.15s;
+}
+.idea-item:hover { background: var(--accent-soft); }
+.idea-content {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.idea-date {
+  font-size: 10px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.idea-actions { display: flex; gap: 4px; }
+
+.quick-capture {
+  background: linear-gradient(135deg, var(--plum-soft) 0%, var(--bg-elevated) 100%);
+  border: 1px solid var(--plum-soft);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 20px;
+}
+.quick-capture-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--plum);
+  margin-bottom: 10px;
+}
+
+/* WISHLIST */
+.wishlist-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: all 0.15s;
+  position: relative;
+}
+.wishlist-card:hover { border-color: var(--amber); }
+.wishlist-card.done { opacity: 0.6; background: var(--bg-elevated); }
+.wishlist-check {
+  width: 26px; height: 26px;
+  border: 2px solid var(--ink-muted);
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 2px;
+  position: relative;
+  transition: all 0.15s;
+}
+.wishlist-check:hover { border-color: var(--ink); }
+.wishlist-check.checked { background: var(--amber); border-color: var(--amber); }
+.wishlist-check.checked::after {
+  content: '★';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+}
+.wishlist-card.done .wishlist-title { text-decoration: line-through; }
+.wishlist-info { flex: 1; min-width: 0; }
+.wishlist-title {
+  font-family: 'Fraunces', serif;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+.wishlist-desc {
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  margin-bottom: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.wishlist-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+/* LEARNING */
+.learning-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 14px;
+  transition: all 0.2s;
+}
+.learning-card:hover { border-color: var(--sage); box-shadow: var(--shadow); }
+.learning-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.learning-title {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.learning-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: var(--sage-soft);
+  color: var(--sage);
+  padding: 4px 10px;
+  border-radius: 12px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.learning-desc {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+.milestones {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+}
+.milestone-label {
+  font-size: 11px;
+  color: var(--ink-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.milestone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 13px;
+}
+.milestone-check {
+  width: 20px; height: 20px;
+  border: 1.5px solid var(--ink-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.15s;
+}
+.milestone-check.checked { background: var(--sage); border-color: var(--sage); }
+.milestone-check.checked::after {
+  content: '';
+  position: absolute;
+  left: 5px; top: 1px;
+  width: 5px; height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.milestone.done span { text-decoration: line-through; opacity: 0.6; }
+.milestone-text { flex: 1; color: var(--ink-soft); word-break: break-word; }
+.milestone-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-muted);
+  font-size: 18px;
+  padding: 4px 8px;
+}
+.learning-progress-bar {
+  height: 6px;
+  background: var(--line);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+.learning-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--sage), #7a9a7a);
+  border-radius: 3px;
+  transition: width 0.4s;
+}
+
+/* EMPTY */
+.empty {
+  text-align: center;
+  padding: 48px 24px;
+  background: var(--bg-card);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  color: var(--ink-muted);
+}
+.empty-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.4; }
+.empty p { font-size: 13px; font-style: italic; font-family: 'Fraunces', serif; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 22, 18, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+.modal {
+  background: var(--bg-elevated);
+  border-radius: var(--radius);
+  padding: 28px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 18px;
+}
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--ink);
+  outline: none;
+}
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--ink); }
+.field textarea { resize: vertical; min-height: 70px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }
+
+.ai-export-textarea {
+  width: 100%;
+  min-height: 280px;
+  max-height: 50vh;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  resize: vertical;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  outline: none;
+}
+.ai-export-hint {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-bottom: 12px;
+  font-style: italic;
+  font-family: 'Fraunces', serif;
+}
+.ai-export-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: var(--ink);
+  color: var(--bg-elevated);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  z-index: 200;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transition: all 0.2s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Mobile menu drawer */
+.mobile-menu {
+  position: fixed;
+  top: 0; right: -100%;
+  width: 280px;
+  max-width: 80vw;
+  height: 100vh;
+  background: var(--bg-elevated);
+  z-index: 110;
+  transition: right 0.3s;
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--safe-top) + 24px) 16px 24px;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+  overflow-y: auto;
+}
+.mobile-menu.open { right: 0; }
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 105;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.mobile-menu-overlay.open { opacity: 1; pointer-events: auto; }
+.mobile-menu-title {
+  font-family: 'Fraunces', serif;
+  font-size: 13px;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+  padding: 0 12px;
+}
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+@media (max-width: 768px) {
+  .app { display: block; }
+  .sidebar { display: none; }
+  .mobile-topbar { display: flex; }
+  .bottom-nav { display: block; }
+  .fab { display: flex; }
+  .main {
+    padding: 16px 16px calc(var(--safe-bottom) + 100px);
+    max-width: 100%;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    gap: 8px;
+  }
+  .header-left h2 { font-size: 28px; }
+  .header-right { display: none; }
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 24px; }
+  .stat-card { padding: 14px 16px; }
+  .stat-value { font-size: 26px; }
+  .field-row { grid-template-columns: 1fr; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .project-detail-header { padding: 18px; }
+  .project-detail-header h3 { font-size: 22px; }
+  .modal { padding: 20px; max-height: 85vh; }
+  .modal h3 { font-size: 18px; }
+  .add-row { flex-wrap: wrap; }
+  .add-row .add-input { flex-basis: 100%; }
+  .btn-primary { padding: 10px 14px; }
+  .add-controls .add-select { flex: 1; min-width: 0; }
+  .task-delete { opacity: 1; }
+  .note-actions { opacity: 1; }
+  .idea-actions { opacity: 1; }
+  .section-title { flex-wrap: wrap; }
+  .section-title-actions { width: 100%; }
+}
+
+@media (max-width: 380px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .bn-label { font-size: 9px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- DESKTOP SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>Atlas</h1>
+      <p>Your personal hub</p>
+    </div>
+
+    <div class="sync-status" id="sync-status">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-text">Local only</span>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Workspace</div>
+      <button class="nav-item active" data-view="dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" data-view="tasks">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Tasks
+        <span class="nav-count" id="nav-tasks-count">0</span>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Projects</div>
+      <button class="nav-item" data-view="long">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
+        Long Term
+        <span class="nav-count" id="nav-long-count">0</span>
+      </button>
+      <button class="nav-item" data-view="short">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Short Term
+        <span class="nav-count" id="nav-short-count">0</span>
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Mind</div>
+      <button class="nav-item" data-view="ideas">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21h6M12 17v4M5 8a7 7 0 1 1 14 0c0 2.5-1.5 4.5-3 6l-1 2H9l-1-2C6.5 12.5 5 10.5 5 8z"/></svg>
+        Idea Center
+        <span class="nav-count" id="nav-ideas-count">0</span>
+      </button>
+      <button class="nav-item" data-view="wishlist">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8.5 22 9.5 17 14.5 18 22 12 18.5 6 22 7 14.5 2 9.5 9 8.5 12 2"/></svg>
+        Wishlist
+        <span class="nav-count" id="nav-wishlist-count">0</span>
+      </button>
+      <button class="nav-item" data-view="learning">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Learning
+        <span class="nav-count" id="nav-learning-count">0</span>
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="footer-btn" onclick="openSyncSettings()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c2.5-2.5 4-6 4-9s-1.5-6.5-4-9m0 18c-2.5-2.5-4-6-4-9s1.5-6.5 4-9"/></svg>
+        Sync Settings
+      </button>
+      <button class="footer-btn" onclick="openAIExport('all')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        Export for AI
+      </button>
+      <button class="footer-btn" onclick="exportData()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Backup (JSON)
+      </button>
+      <button class="footer-btn" onclick="document.getElementById('import-file').click()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Restore
+      </button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)" />
+    </div>
+  </aside>
+
+  <!-- MOBILE TOP BAR -->
+  <div class="mobile-topbar">
+    <div class="mobile-brand" id="mobile-title">Atlas</div>
+    <div class="mobile-actions">
+      <div class="sync-dot" id="sync-dot-mobile" style="margin-right:4px"></div>
+      <button class="icon-btn" onclick="openMobileMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="main"></main>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bn-item active" data-view="dashboard">
+      <svg class="bn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="bn-label">Home</span>
+    </button>
+    <button class="bn-item" data-view="tasks">
+      <svg class="bn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span class="bn-label">Tasks</span>
+    </button>
+    <button class="bn-item" data-view="long">
+      <svg class="bn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span class="bn-label">Projects</span>
+    </button>
+    <button class="bn-item" data-view="ideas">
+      <svg class="bn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21h6M12 17v4M5 8a7 7 0 1 1 14 0c0 2.5-1.5 4.5-3 6l-1 2H9l-1-2C6.5 12.5 5 10.5 5 8z"/></svg>
+      <span class="bn-label">Ideas</span>
+    </button>
+    <button class="bn-item" data-view="more">
+      <svg class="bn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      <span class="bn-label">More</span>
+    </button>
+  </div>
+</nav>
+
+<!-- FAB (mobile) -->
+<button class="fab" id="fab" onclick="handleFab()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</button>
+
+<!-- MOBILE DRAWER MENU -->
+<div class="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-menu" id="mobile-menu">
+  <div class="brand" style="border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:16px">
+    <h1>Atlas</h1>
+    <p>Your personal hub</p>
+  </div>
+
+  <div class="sync-status" id="sync-status-mobile">
+    <div class="sync-dot"></div>
+    <span>Local only</span>
+  </div>
+
+  <div class="mobile-menu-title">Quick access</div>
+  <button class="nav-item" onclick="setView('long'); closeMobileMenu();">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
+    Long Term Projects
+  </button>
+  <button class="nav-item" onclick="setView('short'); closeMobileMenu();">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Short Term Projects
+  </button>
+  <button class="nav-item" onclick="setView('wishlist'); closeMobileMenu();">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8.5 22 9.5 17 14.5 18 22 12 18.5 6 22 7 14.5 2 9.5 9 8.5 12 2"/></svg>
+    Wishlist
+  </button>
+  <button class="nav-item" onclick="setView('learning'); closeMobileMenu();">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    Learning
+  </button>
+
+  <div class="mobile-menu-title" style="margin-top:24px">Tools</div>
+  <button class="nav-item" onclick="openSyncSettings(); closeMobileMenu();">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c2.5-2.5 4-6 4-9s-1.5-6.5-4-9"/></svg>
+    Sync Settings
+  </button>
+  <button class="nav-item" onclick="openAIExport('all'); closeMobileMenu();">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    Export for AI
+  </button>
+  <button class="nav-item" onclick="exportData(); closeMobileMenu();">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Download Backup
+  </button>
+  <button class="nav-item" onclick="document.getElementById('import-file').click(); closeMobileMenu();">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    Restore Backup
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+// ============ STATE ============
+let state = {
+  tasks: [],
+  projects: [],
+  learning: [],
+  ideas: [],
+  buckets: [],
+  wishlist: [],
+  currentView: 'dashboard',
+  currentProject: null,
+  currentProjectTab: 'tasks',
+  collapsedBuckets: {},
+  lastModified: 0
+};
+
+const STORAGE_KEY = 'atlas-hub-data-v3';
+const SETTINGS_KEY = 'atlas-settings-v1';
+
+// ============ WORKER-BASED SYNC STATE ============
+// No tokens stored in the browser. The Cloudflare Worker holds the
+// refresh token permanently. The app just calls the Worker.
+let syncState = {
+  workerUrl: null,     // e.g. https://atlas-sync.yourname.workers.dev
+  workerSecret: null,  // optional shared secret set in Worker env
+  status: 'idle',
+  lastSync: 0,
+  pendingSave: false,
+  saveTimer: null
+};
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      syncState.workerUrl = s.workerUrl || null;
+      syncState.workerSecret = s.workerSecret || null;
+    }
+  } catch(e) {}
+}
+
+function saveSettings() {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+      workerUrl: syncState.workerUrl,
+      workerSecret: syncState.workerSecret
+    }));
+  } catch(e) {}
+}
+
+// ============ LOCAL STORAGE ============
+function loadAll() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      Object.assign(state, {
+        tasks: data.tasks || [],
+        projects: data.projects || [],
+        learning: data.learning || [],
+        ideas: data.ideas || [],
+        buckets: data.buckets || [],
+        wishlist: data.wishlist || [],
+        lastModified: data.lastModified || 0
+      });
+    }
+    // Migrate from v1/v2
+    ['atlas-hub-data-v1', 'atlas-hub-data-v2'].forEach(oldKey => {
+      const old = localStorage.getItem(oldKey);
+      if (old && !raw) {
+        const data = JSON.parse(old);
+        Object.assign(state, {
+          tasks: data.tasks || [],
+          projects: data.projects || [],
+          learning: data.learning || [],
+          ideas: data.ideas || [],
+          buckets: data.buckets || [],
+          wishlist: data.wishlist || []
+        });
+        saveLocal();
+      }
+    });
+  } catch (e) {
+    console.error('Load failed:', e);
+    showToast('Could not load saved data');
+  }
+  render();
+  // After local load, try to pull from cloud if worker is configured
+  if (syncState.workerUrl) {
+    workerPullOnLoad();
+  }
+}
+
+function saveLocal() {
+  state.lastModified = Date.now();
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      tasks: state.tasks,
+      projects: state.projects,
+      learning: state.learning,
+      ideas: state.ideas,
+      buckets: state.buckets,
+      wishlist: state.wishlist,
+      lastModified: state.lastModified
+    }));
+  } catch (e) {
+    console.error('Save failed:', e);
+    showToast('Local save failed');
+  }
+}
+
+function saveAll() {
+  saveLocal();
+  if (syncState.workerUrl) {
+    if (syncState.saveTimer) clearTimeout(syncState.saveTimer);
+    syncState.saveTimer = setTimeout(workerPush, 1500);
+  }
+}
+
+// ============ WORKER SYNC ============
+function setSyncStatus(status, text) {
+  syncState.status = status;
+  const dots = [document.getElementById('sync-dot'), document.getElementById('sync-dot-mobile')];
+  const textEl = document.getElementById('sync-text');
+  const mobileStatus = document.querySelector('#sync-status-mobile span');
+
+  dots.forEach(dot => {
+    if (!dot) return;
+    dot.className = 'sync-dot';
+    if (status === 'connected') dot.classList.add('connected');
+    else if (status === 'syncing') dot.classList.add('syncing');
+    else if (status === 'error') dot.classList.add('error');
+  });
+  if (textEl) textEl.textContent = text;
+  if (mobileStatus) mobileStatus.textContent = text;
+}
+
+function workerHeaders() {
+  const h = { 'Content-Type': 'application/json' };
+  if (syncState.workerSecret) h['X-Atlas-Secret'] = syncState.workerSecret;
+  return h;
+}
+
+async function workerPullOnLoad() {
+  setSyncStatus('syncing', 'Connecting...');
+  try {
+    // Check auth status first
+    const statusRes = await fetch(syncState.workerUrl + '/auth/status', {
+      headers: workerHeaders()
+    });
+    if (!statusRes.ok) throw new Error('Worker unreachable');
+    const { authenticated } = await statusRes.json();
+
+    if (!authenticated) {
+      setSyncStatus('error', 'Not signed in');
+      showToast('Atlas sync: sign in via Sync Settings');
+      return;
+    }
+
+    // Pull data
+    const res = await fetch(syncState.workerUrl + '/data', {
+      headers: workerHeaders()
+    });
+    if (!res.ok) throw new Error('Pull failed: ' + res.status);
+    const { data } = await res.json();
+
+    if (data && data.lastModified && data.lastModified > state.lastModified) {
+      Object.assign(state, {
+        tasks: data.tasks || [],
+        projects: data.projects || [],
+        learning: data.learning || [],
+        ideas: data.ideas || [],
+        buckets: data.buckets || [],
+        wishlist: data.wishlist || [],
+        lastModified: data.lastModified
+      });
+      saveLocal();
+      render();
+      showToast('Synced from cloud');
+    } else if (state.lastModified > 0) {
+      // Local is newer or equal: push up
+      await workerPush(true);
+    }
+
+    syncState.lastSync = Date.now();
+    setSyncStatus('connected', 'Synced');
+  } catch (e) {
+    console.error('Worker pull failed:', e);
+    setSyncStatus('error', 'Sync error');
+  }
+}
+
+async function workerPush(silent = false) {
+  if (!syncState.workerUrl) return;
+  if (!silent) setSyncStatus('syncing', 'Saving...');
+  try {
+    const payload = JSON.stringify({
+      tasks: state.tasks,
+      projects: state.projects,
+      learning: state.learning,
+      ideas: state.ideas,
+      buckets: state.buckets,
+      wishlist: state.wishlist,
+      lastModified: state.lastModified
+    });
+    const res = await fetch(syncState.workerUrl + '/data', {
+      method: 'POST',
+      headers: workerHeaders(),
+      body: payload
+    });
+    if (!res.ok) throw new Error('Push failed: ' + res.status);
+    syncState.lastSync = Date.now();
+    setSyncStatus('connected', 'Synced ' + new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}));
+  } catch (e) {
+    console.error('Worker push failed:', e);
+    setSyncStatus('error', 'Save failed');
+  }
+}
+
+async function workerSignIn() {
+  if (!syncState.workerUrl) {
+    showToast('Set Worker URL first');
+    openSyncSettings();
+    return;
+  }
+  try {
+    const res = await fetch(syncState.workerUrl + '/auth/url', {
+      headers: workerHeaders()
+    });
+    if (!res.ok) throw new Error('Could not get auth URL');
+    const { url } = await res.json();
+    // Open Google sign-in in same tab; Worker redirects back after auth
+    window.location.href = url;
+  } catch (e) {
+    showToast('Could not reach worker: ' + e.message);
+  }
+}
+
+async function workerSignOut() {
+  if (!syncState.workerUrl) return;
+  try {
+    await fetch(syncState.workerUrl + '/auth/revoke', {
+      method: 'POST',
+      headers: workerHeaders()
+    });
+  } catch (_) {}
+  setSyncStatus('idle', 'Local only');
+  closeModal();
+  showToast('Signed out from sync');
+}
+
+async function manualSync() {
+  if (!syncState.workerUrl) { openSyncSettings(); return; }
+  await workerPullOnLoad();
+}
+
+// Check on returning to tab
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && syncState.workerUrl) {
+    if (Date.now() - syncState.lastSync > 30000) {
+      workerPullOnLoad();
+    }
+  }
+});
+
+// Handle redirect back from Google auth (?atlas_auth=ok)
+if (new URLSearchParams(window.location.search).get('atlas_auth') === 'ok') {
+  // Clean up URL
+  history.replaceState({}, '', window.location.pathname);
+  setTimeout(() => {
+    workerPullOnLoad();
+    showToast('Google sign-in successful. Syncing...');
+  }, 500);
+}
+
+function openSyncSettings() {
+  const hasWorker = !!syncState.workerUrl;
+  showModal(`
+    <h3>Sync Settings</h3>
+    <div style="background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px;margin-bottom:16px;font-size:13px;line-height:1.7;color:var(--ink-soft)">
+      Atlas uses a <strong>Cloudflare Worker</strong> as a sync broker. It holds your Google auth permanently so you never need to sign in again. Set it up once using the guide, then paste the Worker URL below.
+      <br><br>
+      <strong>No Worker URL yet?</strong> Open <code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:11px">SETUP-GUIDE-v2.md</code> for step-by-step instructions.
+    </div>
+    <div class="field">
+      <label>Worker URL</label>
+      <input id="g-worker-url" placeholder="https://atlas-sync.yourname.workers.dev" value="${escapeHtml(syncState.workerUrl || '')}" />
+    </div>
+    <div class="field">
+      <label>Worker Secret (optional, if you set ATLAS_SECRET)</label>
+      <input id="g-worker-secret" placeholder="leave blank if not set" value="${escapeHtml(syncState.workerSecret || '')}" type="password" />
+    </div>
+    <div style="font-size:12px;color:var(--ink-muted);margin-bottom:16px;font-style:italic;font-family:'Fraunces',serif">
+      Status: ${syncState.status === 'connected' ? '✓ Synced' : syncState.status === 'error' ? '✗ Error' : 'Local only'}
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      ${hasWorker ? `<button class="btn-secondary" onclick="workerSignOut()" style="color:var(--rose)">Sign out</button>` : ''}
+      <button class="btn-primary" onclick="saveSyncSettings()">Save</button>
+    </div>
+    <div style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px">
+      <button class="btn-secondary" style="width:100%" onclick="workerSignIn()">Sign in to Google via Worker →</button>
+    </div>
+  `);
+}
+
+function saveSyncSettings() {
+  const url = document.getElementById('g-worker-url').value.trim().replace(/\/$/, '');
+  const secret = document.getElementById('g-worker-secret').value.trim();
+  if (!url) { showToast('Worker URL required'); return; }
+  syncState.workerUrl = url;
+  syncState.workerSecret = secret || null;
+  saveSettings();
+  closeModal();
+  workerPullOnLoad();
+}
+
+// Legacy stubs (called from sidebar/menu buttons, now routing to Worker flow)
+function signInToGoogle() { workerSignIn(); }
+function signOutGoogle() { workerSignOut(); }
+function saveSyncSettingsLegacy() { saveSyncSettings(); }
+
+// Periodic visibility-based sync already above. No token refresh needed.
+async function initGoogleSync() {
+  // Kept for compatibility. Worker handles auth.
+  if (!syncState.workerUrl) {
+    setSyncStatus('idle', 'Local only');
+    return;
+  }
+  setSyncStatus('syncing', 'Connecting...');
+
+  workerPullOnLoad();
+}
+
+function exportData() {
+  const data = {
+    tasks: state.tasks, projects: state.projects, learning: state.learning,
+    ideas: state.ideas, buckets: state.buckets, wishlist: state.wishlist,
+    exportedAt: new Date().toISOString(), version: 3
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `atlas-backup-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Backup downloaded');
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!confirm('This will replace all your current data. Continue?')) return;
+      state.tasks = data.tasks || [];
+      state.projects = data.projects || [];
+      state.learning = data.learning || [];
+      state.ideas = data.ideas || [];
+      state.buckets = data.buckets || [];
+      state.wishlist = data.wishlist || [];
+      saveAll(); render();
+      showToast('Backup restored');
+    } catch (err) { showToast('Invalid backup file'); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ============ HELPERS ============
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const escapeHtml = s => String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtDate = d => d ? new Date(d).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '';
+const fmtDateTime = d => d ? new Date(d).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : '';
+const isOverdue = d => d && new Date(d) < new Date(new Date().toDateString());
+const daysFromNow = d => Math.ceil((new Date(d) - new Date()) / 86400000);
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 5) return 'Burning the midnight oil';
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  if (h < 21) return 'Good evening';
+  return 'Working late';
+}
+function getCurrentDate() {
+  return new Date().toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
+}
+function isMobile() { return window.innerWidth <= 768; }
+
+// ============ RENDER ============
+function render() {
+  updateCounts();
+  updateNav();
+  updateMobileTitle();
+  const main = document.getElementById('main');
+  if (state.currentProject) {
+    main.innerHTML = renderProjectDetail();
+    attachDetailHandlers();
+  } else {
+    switch(state.currentView) {
+      case 'dashboard': main.innerHTML = renderDashboard(); attachDashboardHandlers(); break;
+      case 'tasks': main.innerHTML = renderTasks(); attachTaskHandlers(); break;
+      case 'long':
+      case 'short': main.innerHTML = renderProjects(state.currentView); attachProjectHandlers(); break;
+      case 'learning': main.innerHTML = renderLearning(); attachLearningHandlers(); break;
+      case 'ideas': main.innerHTML = renderIdeas(); attachIdeasHandlers(); break;
+      case 'wishlist': main.innerHTML = renderWishlist(); attachWishlistHandlers(); break;
+      case 'more': main.innerHTML = renderMore(); break;
+    }
+  }
+  // scroll to top on view switch
+  window.scrollTo(0, 0);
+}
+
+function updateCounts() {
+  const els = {
+    'nav-tasks-count': state.tasks.filter(t => !t.done).length,
+    'nav-long-count': state.projects.filter(p => p.type === 'long' && !p.parentId).length,
+    'nav-short-count': state.projects.filter(p => p.type === 'short' && !p.parentId).length,
+    'nav-learning-count': state.learning.length,
+    'nav-ideas-count': state.ideas.length,
+    'nav-wishlist-count': state.wishlist.filter(w => !w.done).length
+  };
+  for (const id in els) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = els[id];
+  }
+}
+
+function updateNav() {
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset?.view === state.currentView && !state.currentProject);
+  });
+  document.querySelectorAll('.bn-item').forEach(el => {
+    let v = state.currentView;
+    if (v === 'short') v = 'long'; // both projects share same nav
+    if (v === 'wishlist' || v === 'learning') v = 'more';
+    el.classList.toggle('active', el.dataset.view === v);
+  });
+}
+
+function updateMobileTitle() {
+  const titles = {
+    dashboard: 'Atlas',
+    tasks: 'Tasks',
+    long: 'Long Term',
+    short: 'Short Term',
+    ideas: 'Ideas',
+    wishlist: 'Wishlist',
+    learning: 'Learning',
+    more: 'More'
+  };
+  const el = document.getElementById('mobile-title');
+  if (el) {
+    if (state.currentProject) {
+      const p = state.projects.find(x => x.id === state.currentProject);
+      el.textContent = p ? p.title : 'Atlas';
+    } else {
+      el.textContent = titles[state.currentView] || 'Atlas';
+    }
+  }
+}
+
+// ============ DASHBOARD ============
+function renderDashboard() {
+  const openTasks = state.tasks.filter(t => !t.done);
+  const todayTasks = openTasks.filter(t => t.due && new Date(t.due).toDateString() === new Date().toDateString());
+  const overdueTasks = openTasks.filter(t => isOverdue(t.due));
+  const upcomingProjects = state.projects.filter(p => p.deadline && !isOverdue(p.deadline) && !p.parentId).sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).slice(0,3);
+  const recentIdeas = [...state.ideas].sort((a,b) => b.created - a.created).slice(0, 3);
+
+  return `
+    <div class="header">
+      <div class="header-left">
+        <h2>${getGreeting()}, Piyush.</h2>
+        <p class="greeting">Here is what your day looks like</p>
+      </div>
+      <div class="header-right">
+        <div class="date">${getCurrentDate().toUpperCase()}</div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card accent">
+        <div class="stat-label">Due Today</div>
+        <div class="stat-value">${todayTasks.length}</div>
+        <div class="stat-sub">on your plate</div>
+      </div>
+      <div class="stat-card rose">
+        <div class="stat-label">Overdue</div>
+        <div class="stat-value">${overdueTasks.length}</div>
+        <div class="stat-sub">need attention</div>
+      </div>
+      <div class="stat-card indigo">
+        <div class="stat-label">Projects</div>
+        <div class="stat-value">${state.projects.filter(p=>!p.parentId).length}</div>
+        <div class="stat-sub">in motion</div>
+      </div>
+      <div class="stat-card plum">
+        <div class="stat-label">Ideas</div>
+        <div class="stat-value">${state.ideas.length}</div>
+        <div class="stat-sub">across ${state.buckets.length} buckets</div>
+      </div>
+    </div>
+
+    <div class="quick-capture">
+      <div class="quick-capture-label">⚡ Quick capture</div>
+      <div class="add-row">
+        <input class="add-input" id="quick-idea" placeholder="Drop a fleeting idea..." />
+        <button class="btn-primary" onclick="quickCaptureIdea()">Capture</button>
+      </div>
+    </div>
+
+    <div class="section-title">
+      Today's Focus
+      <div class="section-title-actions">
+        <button onclick="setView('tasks')">View all →</button>
+      </div>
+    </div>
+    ${todayTasks.length === 0 && overdueTasks.length === 0
+      ? `<div class="empty"><div class="empty-icon">✦</div><p>Nothing pressing today.</p></div>`
+      : `<div class="task-list">${[...overdueTasks, ...todayTasks].slice(0, 6).map(renderTaskRow).join('')}</div>`
+    }
+
+    ${recentIdeas.length > 0 ? `
+      <div class="section-title" style="margin-top: 32px;">
+        Recent Sparks
+        <div class="section-title-actions">
+          <button onclick="setView('ideas')">All ideas →</button>
+        </div>
+      </div>
+      ${recentIdeas.map(i => {
+        const bucket = state.buckets.find(b => b.id === i.bucketId);
+        return `<div class="idea-item" style="background:var(--bg-card);border:1px solid var(--line)">
+          <div class="idea-content">
+            ${escapeHtml(i.content)}
+            ${bucket ? `<div class="idea-date">${escapeHtml(bucket.title)} · ${fmtDateTime(i.created)}</div>` : `<div class="idea-date">${fmtDateTime(i.created)}</div>`}
+          </div>
+        </div>`;
+      }).join('')}
+    ` : ''}
+
+    ${upcomingProjects.length > 0 ? `
+      <div class="section-title" style="margin-top: 32px;">
+        Up Next in Projects
+        <div class="section-title-actions">
+          <button onclick="setView('long')">All projects →</button>
+        </div>
+      </div>
+      <div class="projects-grid">${upcomingProjects.map(renderProjectCard).join('')}</div>
+    ` : ''}
+  `;
+}
+
+function attachDashboardHandlers() {
+  const qi = document.getElementById('quick-idea');
+  if (qi) qi.addEventListener('keypress', (e) => { if (e.key === 'Enter') quickCaptureIdea(); });
+  document.querySelectorAll('[data-task]').forEach(el => {
+    el.addEventListener('click', () => toggleTask(el.dataset.task));
+  });
+  document.querySelectorAll('[data-project]').forEach(el => {
+    el.addEventListener('click', () => openProject(el.dataset.project));
+  });
+}
+
+function quickCaptureIdea() {
+  const input = document.getElementById('quick-idea');
+  const content = input.value.trim();
+  if (!content) return;
+  state.ideas.unshift({ id: uid(), content, bucketId: null, created: Date.now() });
+  saveAll();
+  input.value = '';
+  showToast('Idea captured');
+  render();
+}
+
+// ============ TASKS ============
+function renderTasks() {
+  const open = state.tasks.filter(t => !t.done).sort((a,b) => {
+    if (a.due && b.due) return new Date(a.due) - new Date(b.due);
+    if (a.due) return -1;
+    if (b.due) return 1;
+    const pri = {high:0, med:1, low:2};
+    return (pri[a.priority]||3) - (pri[b.priority]||3);
+  });
+  const done = state.tasks.filter(t => t.done);
+
+  return `
+    <div class="header">
+      <div class="header-left">
+        <h2>Tasks</h2>
+        <p class="greeting">${open.length} open · ${done.length} done</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary btn-ai" onclick="openAIExport('tasks')">↗ Send to AI</button>
+      </div>
+    </div>
+
+    <div class="add-form">
+      <div class="add-row">
+        <input class="add-input" id="task-input" placeholder="What needs doing?" />
+        <button class="btn-primary" onclick="addTask()">Add</button>
+      </div>
+      <div class="add-controls">
+        <select class="add-select" id="task-priority">
+          <option value="">Priority</option>
+          <option value="high">High</option>
+          <option value="med">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <select class="add-select" id="task-project">
+          <option value="">No project</option>
+          ${state.projects.map(p => `<option value="${p.id}">${escapeHtml(p.title)}</option>`).join('')}
+        </select>
+        <input type="date" class="add-select" id="task-due" />
+      </div>
+    </div>
+
+    ${open.length === 0
+      ? `<div class="empty"><div class="empty-icon">✓</div><p>All caught up.</p></div>`
+      : `<div class="task-list">${open.map(renderTaskRow).join('')}</div>`
+    }
+
+    ${done.length > 0 ? `
+      <div class="section-title" style="margin-top: 32px;">
+        Recently Completed
+        <div class="section-title-actions">
+          <button onclick="clearDone()">Clear all</button>
+        </div>
+      </div>
+      <div class="task-list">${done.slice(0, 10).map(renderTaskRow).join('')}</div>
+    ` : ''}
+  `;
+}
+
+function renderTaskRow(t) {
+  const project = t.projectId ? state.projects.find(p => p.id === t.projectId) : null;
+  return `
+    <div class="task ${t.done ? 'done' : ''}">
+      <div class="checkbox ${t.done ? 'checked' : ''}" data-task="${t.id}"></div>
+      <div class="task-content">
+        <div class="task-title">${escapeHtml(t.title)}</div>
+        <div class="task-meta">
+          ${t.priority ? `<span class="task-tag tag-priority-${t.priority}">${t.priority === 'med' ? 'medium' : t.priority}</span>` : ''}
+          ${project ? `<span class="task-tag tag-project">${escapeHtml(project.title)}</span>` : ''}
+          ${t.due ? `<span class="task-tag tag-due ${isOverdue(t.due) && !t.done ? 'overdue' : ''}">${fmtDate(t.due)}${isOverdue(t.due) && !t.done ? ' · overdue' : ''}</span>` : ''}
+        </div>
+      </div>
+      <button class="task-delete" data-del-task="${t.id}" title="Delete">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      </button>
+    </div>
+  `;
+}
+
+function attachTaskHandlers() {
+  document.querySelectorAll('[data-task]').forEach(el => {
+    el.addEventListener('click', () => toggleTask(el.dataset.task));
+  });
+  document.querySelectorAll('[data-del-task]').forEach(el => {
+    el.addEventListener('click', (e) => { e.stopPropagation(); deleteTask(el.dataset.delTask); });
+  });
+  const input = document.getElementById('task-input');
+  if (input) {
+    input.addEventListener('keypress', (e) => { if (e.key === 'Enter') addTask(); });
+    if (!isMobile()) input.focus();
+  }
+}
+
+function addTask() {
+  const input = document.getElementById('task-input');
+  const title = input.value.trim();
+  if (!title) return;
+  state.tasks.unshift({
+    id: uid(), title,
+    priority: document.getElementById('task-priority').value || null,
+    projectId: document.getElementById('task-project').value || null,
+    due: document.getElementById('task-due').value || null,
+    done: false, created: Date.now()
+  });
+  saveAll(); render();
+}
+function toggleTask(id) {
+  const t = state.tasks.find(t => t.id === id);
+  if (!t) return;
+  t.done = !t.done;
+  t.completedAt = t.done ? Date.now() : null;
+  saveAll(); render();
+}
+function deleteTask(id) {
+  state.tasks = state.tasks.filter(t => t.id !== id);
+  saveAll(); render();
+}
+function clearDone() {
+  state.tasks = state.tasks.filter(t => !t.done);
+  saveAll(); render();
+}
+
+// ============ PROJECTS ============
+function renderProjects(type) {
+  const list = state.projects.filter(p => p.type === type && !p.parentId);
+  const title = type === 'long' ? 'Long Term Projects' : 'Short Term Projects';
+  const desc = type === 'long' ? 'The slow-burning ambitions' : 'The sprints and quick wins';
+  const otherType = type === 'long' ? 'short' : 'long';
+  const otherLabel = type === 'long' ? 'Short Term' : 'Long Term';
+
+  return `
+    <div class="header">
+      <div class="header-left">
+        <h2>${title}</h2>
+        <p class="greeting">${desc}</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary" onclick="setView('${otherType}')">${otherLabel} →</button>
+        <button class="btn-secondary btn-ai" onclick="openAIExport('projects-${type}')">↗ Send to AI</button>
+        <button class="btn-primary" onclick="openProjectModal('${type}')">+ New</button>
+      </div>
+    </div>
+
+    ${list.length === 0
+      ? `<div class="empty"><div class="empty-icon">◇</div><p>No ${type === 'long' ? 'long term' : 'short term'} projects yet.</p></div>`
+      : `<div class="projects-grid">${list.map(renderProjectCard).join('')}</div>`
+    }
+  `;
+}
+
+function renderProjectCard(p) {
+  const subprojects = state.projects.filter(s => s.parentId === p.id);
+  const allTasks = getProjectTasks(p.id);
+  const doneTasks = allTasks.filter(t => t.done).length;
+  const progress = allTasks.length > 0 ? Math.round((doneTasks / allTasks.length) * 100) : 0;
+  const daysLeft = p.deadline ? daysFromNow(p.deadline) : null;
+  const notes = (p.notes || []).length;
+  const links = (p.links || []).length;
+
+  return `
+    <div class="project-card ${p.type}" data-project="${p.id}">
+      <div class="project-type">${p.type === 'long' ? 'Long Term' : 'Short Term'}${p.parentId ? ' · Sub' : ''}</div>
+      <div class="project-title">${escapeHtml(p.title)}</div>
+      <div class="project-desc">${escapeHtml(p.description || 'No description')}</div>
+      <div class="project-stats">
+        <span><strong>${allTasks.length}</strong> tasks</span>
+        ${notes > 0 ? `<span><strong>${notes}</strong> notes</span>` : ''}
+        ${links > 0 ? `<span><strong>${links}</strong> links</span>` : ''}
+        ${subprojects.length > 0 ? `<span><strong>${subprojects.length}</strong> sub</span>` : ''}
+        ${daysLeft !== null ? `<span><strong>${daysLeft >= 0 ? daysLeft + 'd' : 'overdue'}</strong></span>` : ''}
+        <span style="margin-left:auto"><strong>${progress}%</strong></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+    </div>
+  `;
+}
+
+function attachProjectHandlers() {
+  document.querySelectorAll('[data-project]').forEach(el => {
+    el.addEventListener('click', () => openProject(el.dataset.project));
+  });
+}
+
+function getProjectTasks(projectId) {
+  const subIds = state.projects.filter(p => p.parentId === projectId).map(p => p.id);
+  return state.tasks.filter(t => t.projectId === projectId || subIds.includes(t.projectId));
+}
+
+function openProject(id) {
+  state.currentProject = id;
+  state.currentProjectTab = 'tasks';
+  render();
+}
+
+function renderProjectDetail() {
+  const p = state.projects.find(p => p.id === state.currentProject);
+  if (!p) { state.currentProject = null; return renderDashboard(); }
+
+  const parent = p.parentId ? state.projects.find(x => x.id === p.parentId) : null;
+  const subprojects = state.projects.filter(s => s.parentId === p.id);
+  const directTasks = state.tasks.filter(t => t.projectId === p.id);
+  const allTasks = getProjectTasks(p.id);
+  const done = allTasks.filter(t => t.done).length;
+  const progress = allTasks.length > 0 ? Math.round((done / allTasks.length) * 100) : 0;
+  const daysLeft = p.deadline ? daysFromNow(p.deadline) : null;
+  const notes = p.notes || [];
+  const links = p.links || [];
+  const tab = state.currentProjectTab;
+
+  let tabContent = '';
+  if (tab === 'tasks') {
+    tabContent = `
+      <div class="add-form">
+        <div class="add-row">
+          <input class="add-input" id="ptask-input" placeholder="Add a task..." />
+          <button class="btn-primary" onclick="addProjectTask('${p.id}')">Add</button>
+        </div>
+      </div>
+      ${directTasks.length === 0
+        ? `<div class="empty"><div class="empty-icon">·</div><p>No tasks here yet.</p></div>`
+        : `<div class="task-list">${directTasks.map(renderTaskRow).join('')}</div>`
+      }
+    `;
+  } else if (tab === 'notes') {
+    tabContent = `
+      <div class="add-form">
+        <textarea class="add-input" id="pnote-input" placeholder="Capture a thought, observation, decision, research..." style="min-height:80px;resize:vertical"></textarea>
+        <div class="add-controls" style="justify-content:flex-end">
+          <button class="btn-primary" onclick="addProjectNote('${p.id}')">Add Note</button>
+        </div>
+      </div>
+      ${notes.length === 0
+        ? `<div class="empty"><div class="empty-icon">✎</div><p>No notes yet.</p></div>`
+        : notes.map((n, i) => `
+          <div class="note-card">
+            <div class="note-header">
+              <div class="note-date">${fmtDateTime(n.created)}</div>
+              <div class="note-actions">
+                <button class="note-action danger" onclick="deleteProjectNote('${p.id}', ${i})">Delete</button>
+              </div>
+            </div>
+            <div class="note-content">${escapeHtml(n.content)}</div>
+          </div>
+        `).join('')
+      }
+    `;
+  } else if (tab === 'links') {
+    tabContent = `
+      <div class="add-form">
+        <div class="add-row">
+          <input class="add-input" id="plink-title" placeholder="Title" style="flex:1" />
+        </div>
+        <div class="add-row" style="margin-top:8px">
+          <input class="add-input" id="plink-url" placeholder="https://..." style="flex:1" />
+          <button class="btn-primary" onclick="addProjectLink('${p.id}')">Add</button>
+        </div>
+      </div>
+      ${links.length === 0
+        ? `<div class="empty"><div class="empty-icon">⌘</div><p>No links yet.</p></div>`
+        : links.map((l, i) => `
+          <div class="link-card">
+            <div class="link-info">
+              <div class="link-title">${escapeHtml(l.title || l.url)}</div>
+              <a class="link-url" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.url)}</a>
+            </div>
+            <button class="note-action danger" onclick="deleteProjectLink('${p.id}', ${i})">Delete</button>
+          </div>
+        `).join('')
+      }
+    `;
+  } else if (tab === 'sub') {
+    tabContent = subprojects.length === 0
+      ? `<div class="empty"><div class="empty-icon">◇</div><p>No sub-projects yet.</p><button class="btn-primary" style="margin-top:14px" onclick="openProjectModal('${p.type}', '${p.id}')">+ Add Sub-project</button></div>`
+      : `<div>${subprojects.map(s => {
+          const sTasks = getProjectTasks(s.id);
+          const sDone = sTasks.filter(t => t.done).length;
+          const sProg = sTasks.length > 0 ? Math.round((sDone/sTasks.length)*100) : 0;
+          return `
+            <div class="subproject" data-project="${s.id}">
+              <div class="subproject-info">
+                <div class="subproject-title">${escapeHtml(s.title)}</div>
+                <div class="subproject-stats">${sDone}/${sTasks.length} tasks · ${sProg}%</div>
+              </div>
+              <div class="mini-progress"><div class="mini-progress-fill" style="width:${sProg}%"></div></div>
+            </div>
+          `;
+        }).join('')}</div>
+        <div style="margin-top:14px"><button class="btn-secondary" onclick="openProjectModal('${p.type}', '${p.id}')">+ Add Sub-project</button></div>
+      `;
+  }
+
+  return `
+    <button class="back-btn" onclick="${parent ? `openProject('${parent.id}')` : `setView('${p.type}')`}">← ${parent ? escapeHtml(parent.title) : (p.type === 'long' ? 'Long term' : 'Short term')}</button>
+
+    <div class="project-detail-header">
+      <div class="project-type" style="color:${p.type==='long'?'var(--indigo)':'var(--accent)'}">${p.type === 'long' ? 'Long Term' : 'Short Term'}${parent ? ' · Sub-project' : ''}</div>
+      <h3>${escapeHtml(p.title)}</h3>
+      <div style="color: var(--ink-soft); font-size: 14px; margin-top: 6px; line-height: 1.6;">${escapeHtml(p.description || 'No description added')}</div>
+      <div class="project-detail-meta">
+        <div>📊 ${done}/${allTasks.length} tasks · ${progress}%</div>
+        ${p.deadline ? `<div>📅 ${fmtDate(p.deadline)}${daysLeft !== null ? ` (${daysLeft >= 0 ? daysLeft + ' days' : 'overdue'})` : ''}</div>` : ''}
+        ${p.estimate ? `<div>⏱ ${escapeHtml(p.estimate)}</div>` : ''}
+      </div>
+      <div class="progress-bar" style="margin-top: 16px;"><div class="progress-fill" style="width:${progress}%; background:${p.type==='long'?'var(--indigo)':'var(--accent)'}"></div></div>
+      <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
+        <button class="btn-secondary btn-ai" onclick="openAIExport('project:${p.id}')">↗ Send to AI</button>
+        <button class="btn-secondary" onclick="editProject('${p.id}')">Edit</button>
+        <button class="btn-secondary" onclick="deleteProject('${p.id}')" style="color:var(--rose); margin-left:auto;">Delete</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab ${tab==='tasks'?'active':''}" data-tab="tasks">Tasks <span class="tab-count">${directTasks.length}</span></button>
+      <button class="tab ${tab==='notes'?'active':''}" data-tab="notes">Notes <span class="tab-count">${notes.length}</span></button>
+      <button class="tab ${tab==='links'?'active':''}" data-tab="links">Links <span class="tab-count">${links.length}</span></button>
+      <button class="tab ${tab==='sub'?'active':''}" data-tab="sub">Sub <span class="tab-count">${subprojects.length}</span></button>
+    </div>
+
+    ${tabContent}
+  `;
+}
+
+function attachDetailHandlers() {
+  document.querySelectorAll('[data-tab]').forEach(el => {
+    el.addEventListener('click', () => {
+      state.currentProjectTab = el.dataset.tab;
+      render();
+    });
+  });
+  document.querySelectorAll('[data-task]').forEach(el => {
+    el.addEventListener('click', () => toggleTask(el.dataset.task));
+  });
+  document.querySelectorAll('[data-del-task]').forEach(el => {
+    el.addEventListener('click', (e) => { e.stopPropagation(); deleteTask(el.dataset.delTask); });
+  });
+  document.querySelectorAll('[data-project]').forEach(el => {
+    el.addEventListener('click', () => openProject(el.dataset.project));
+  });
+  const inp = document.getElementById('ptask-input');
+  if (inp) inp.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addProjectTask(state.currentProject);
+  });
+}
+
+function addProjectTask(projectId) {
+  const inp = document.getElementById('ptask-input');
+  const title = inp.value.trim();
+  if (!title) return;
+  state.tasks.unshift({ id: uid(), title, projectId, priority: null, due: null, done: false, created: Date.now() });
+  saveAll(); render();
+}
+function addProjectNote(projectId) {
+  const inp = document.getElementById('pnote-input');
+  const content = inp.value.trim();
+  if (!content) return;
+  const p = state.projects.find(x => x.id === projectId);
+  if (!p) return;
+  p.notes = p.notes || [];
+  p.notes.unshift({ content, created: Date.now() });
+  saveAll(); render();
+}
+function deleteProjectNote(projectId, idx) {
+  const p = state.projects.find(x => x.id === projectId);
+  if (!p || !p.notes) return;
+  p.notes.splice(idx, 1);
+  saveAll(); render();
+}
+function addProjectLink(projectId) {
+  const titleEl = document.getElementById('plink-title');
+  const urlEl = document.getElementById('plink-url');
+  const title = titleEl.value.trim();
+  let url = urlEl.value.trim();
+  if (!url) return;
+  if (!url.startsWith('http')) url = 'https://' + url;
+  const p = state.projects.find(x => x.id === projectId);
+  if (!p) return;
+  p.links = p.links || [];
+  p.links.unshift({ title: title || url, url, created: Date.now() });
+  saveAll(); render();
+}
+function deleteProjectLink(projectId, idx) {
+  const p = state.projects.find(x => x.id === projectId);
+  if (!p || !p.links) return;
+  p.links.splice(idx, 1);
+  saveAll(); render();
+}
+
+function openProjectModal(type, parentId = null) {
+  const parent = parentId ? state.projects.find(p => p.id === parentId) : null;
+  const heading = parent ? `New Sub-project in "${parent.title}"` : `New ${type === 'long' ? 'Long Term' : 'Short Term'} Project`;
+  showModal(`
+    <h3>${escapeHtml(heading)}</h3>
+    <div class="field"><label>Title</label><input id="m-title" placeholder="Project name" /></div>
+    <div class="field"><label>Description</label><textarea id="m-desc" placeholder="What is this about?"></textarea></div>
+    <div class="field-row">
+      <div class="field"><label>Deadline</label><input type="date" id="m-deadline" /></div>
+      <div class="field"><label>Time Estimate</label><input id="m-estimate" placeholder="e.g. 2 weeks" /></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="createProject('${type}', ${parentId ? `'${parentId}'` : 'null'})">Create</button>
+    </div>
+  `);
+  setTimeout(() => document.getElementById('m-title')?.focus(), 50);
+}
+
+function createProject(type, parentId) {
+  const title = document.getElementById('m-title').value.trim();
+  if (!title) return;
+  state.projects.push({
+    id: uid(), title,
+    description: document.getElementById('m-desc').value.trim(),
+    type, parentId,
+    deadline: document.getElementById('m-deadline').value || null,
+    estimate: document.getElementById('m-estimate').value.trim() || null,
+    notes: [], links: [],
+    created: Date.now()
+  });
+  saveAll(); closeModal(); render();
+}
+
+function editProject(id) {
+  const p = state.projects.find(p => p.id === id);
+  if (!p) return;
+  showModal(`
+    <h3>Edit Project</h3>
+    <div class="field"><label>Title</label><input id="m-title" value="${escapeHtml(p.title)}" /></div>
+    <div class="field"><label>Description</label><textarea id="m-desc">${escapeHtml(p.description || '')}</textarea></div>
+    <div class="field-row">
+      <div class="field"><label>Deadline</label><input type="date" id="m-deadline" value="${p.deadline || ''}" /></div>
+      <div class="field"><label>Time Estimate</label><input id="m-estimate" value="${escapeHtml(p.estimate || '')}" /></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveProjectEdit('${id}')">Save</button>
+    </div>
+  `);
+}
+function saveProjectEdit(id) {
+  const p = state.projects.find(p => p.id === id);
+  if (!p) return;
+  p.title = document.getElementById('m-title').value.trim() || p.title;
+  p.description = document.getElementById('m-desc').value.trim();
+  p.deadline = document.getElementById('m-deadline').value || null;
+  p.estimate = document.getElementById('m-estimate').value.trim() || null;
+  saveAll(); closeModal(); render();
+}
+function deleteProject(id) {
+  if (!confirm('Delete this project and all its sub-projects? Tasks will be unlinked but not deleted.')) return;
+  const toDelete = new Set([id]);
+  let changed = true;
+  while (changed) {
+    changed = false;
+    state.projects.forEach(p => {
+      if (p.parentId && toDelete.has(p.parentId) && !toDelete.has(p.id)) {
+        toDelete.add(p.id); changed = true;
+      }
+    });
+  }
+  state.projects = state.projects.filter(p => !toDelete.has(p.id));
+  state.tasks.forEach(t => { if (toDelete.has(t.projectId)) t.projectId = null; });
+  state.currentProject = null;
+  saveAll(); render();
+}
+
+// ============ IDEAS ============
+function renderIdeas() {
+  const unbucketed = state.ideas.filter(i => !i.bucketId);
+
+  return `
+    <div class="header">
+      <div class="header-left">
+        <h2>Idea Center</h2>
+        <p class="greeting">${state.ideas.length} sparks · ${state.buckets.length} buckets</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary btn-ai" onclick="openAIExport('ideas')">↗ Send to AI</button>
+        <button class="btn-secondary" onclick="openBucketModal()">+ Bucket</button>
+      </div>
+    </div>
+
+    <div class="add-form">
+      <div class="add-row">
+        <input class="add-input" id="idea-input" placeholder="Capture an idea..." />
+        <button class="btn-primary" onclick="addIdea()">Add</button>
+      </div>
+      <div class="add-controls">
+        <select class="add-select" id="idea-bucket" style="flex:1">
+          <option value="">No bucket</option>
+          ${state.buckets.map(b => `<option value="${b.id}">${escapeHtml(b.title)}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+
+    ${state.buckets.map(b => {
+      const ideas = state.ideas.filter(i => i.bucketId === b.id).sort((a,b) => b.created - a.created);
+      const collapsed = state.collapsedBuckets[b.id];
+      return `
+        <div class="idea-bucket">
+          <div class="bucket-header" data-bucket-toggle="${b.id}">
+            <div class="bucket-title-row">
+              <div class="bucket-icon">${escapeHtml(b.title.charAt(0).toUpperCase())}</div>
+              <div class="bucket-title">${escapeHtml(b.title)}</div>
+              <div class="bucket-count">${ideas.length}</div>
+            </div>
+            <div class="bucket-actions" onclick="event.stopPropagation()">
+              <button class="bucket-toggle ${collapsed?'collapsed':''}" data-bucket-toggle="${b.id}">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <button class="note-action" onclick="renameBucket('${b.id}')">Edit</button>
+              <button class="note-action danger" onclick="deleteBucket('${b.id}')">×</button>
+            </div>
+          </div>
+          <div class="bucket-content ${collapsed?'collapsed':''}">
+            ${ideas.length === 0
+              ? `<div style="font-size:12px;color:var(--ink-muted);font-style:italic;padding:8px 0">No ideas in this bucket yet.</div>`
+              : ideas.map(i => `
+                <div class="idea-item">
+                  <div class="idea-content">
+                    ${escapeHtml(i.content)}
+                    <div class="idea-date">${fmtDateTime(i.created)}</div>
+                  </div>
+                  <div class="idea-actions">
+                    <button class="note-action" onclick="moveIdea('${i.id}')">Move</button>
+                    <button class="note-action danger" onclick="deleteIdea('${i.id}')">×</button>
+                  </div>
+                </div>
+              `).join('')
+            }
+          </div>
+        </div>
+      `;
+    }).join('')}
+
+    ${unbucketed.length > 0 ? `
+      <div class="idea-bucket">
+        <div class="bucket-header">
+          <div class="bucket-title-row">
+            <div class="bucket-icon" style="background:var(--line);color:var(--ink-muted)">·</div>
+            <div class="bucket-title">Unbucketed</div>
+            <div class="bucket-count">${unbucketed.length}</div>
+          </div>
+        </div>
+        <div class="bucket-content">
+          ${unbucketed.sort((a,b) => b.created - a.created).map(i => `
+            <div class="idea-item">
+              <div class="idea-content">
+                ${escapeHtml(i.content)}
+                <div class="idea-date">${fmtDateTime(i.created)}</div>
+              </div>
+              <div class="idea-actions">
+                <button class="note-action" onclick="moveIdea('${i.id}')">Move</button>
+                <button class="note-action danger" onclick="deleteIdea('${i.id}')">×</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    ` : ''}
+
+    ${state.buckets.length === 0 && state.ideas.length === 0
+      ? `<div class="empty"><div class="empty-icon">💡</div><p>No ideas yet. Make a bucket or capture above.</p></div>`
+      : ''
+    }
+  `;
+}
+
+function attachIdeasHandlers() {
+  document.querySelectorAll('[data-bucket-toggle]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = el.dataset.bucketToggle;
+      state.collapsedBuckets[id] = !state.collapsedBuckets[id];
+      render();
+    });
+  });
+  const input = document.getElementById('idea-input');
+  if (input) {
+    input.addEventListener('keypress', (e) => { if (e.key === 'Enter') addIdea(); });
+    if (!isMobile()) input.focus();
+  }
+}
+
+function addIdea() {
+  const input = document.getElementById('idea-input');
+  const content = input.value.trim();
+  if (!content) return;
+  const bucketId = document.getElementById('idea-bucket')?.value || null;
+  state.ideas.unshift({ id: uid(), content, bucketId, created: Date.now() });
+  saveAll(); render();
+}
+function deleteIdea(id) {
+  state.ideas = state.ideas.filter(i => i.id !== id);
+  saveAll(); render();
+}
+function moveIdea(id) {
+  const idea = state.ideas.find(i => i.id === id);
+  if (!idea) return;
+  const options = state.buckets.map(b => `<option value="${b.id}" ${b.id===idea.bucketId?'selected':''}>${escapeHtml(b.title)}</option>`).join('');
+  showModal(`
+    <h3>Move Idea</h3>
+    <div class="field"><label>Idea</label><div style="font-size:13px;color:var(--ink-soft);padding:8px 0;font-style:italic">"${escapeHtml(idea.content)}"</div></div>
+    <div class="field"><label>Move to bucket</label>
+      <select id="move-bucket">
+        <option value="">No bucket</option>
+        ${options}
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="confirmMoveIdea('${id}')">Move</button>
+    </div>
+  `);
+}
+function confirmMoveIdea(id) {
+  const idea = state.ideas.find(i => i.id === id);
+  if (!idea) return;
+  idea.bucketId = document.getElementById('move-bucket').value || null;
+  saveAll(); closeModal(); render();
+}
+function openBucketModal() {
+  showModal(`
+    <h3>New Idea Bucket</h3>
+    <div class="field"><label>Bucket Title</label><input id="b-title" placeholder="e.g. Marketing, Cat brand" /></div>
+    <div class="field"><label>Description (optional)</label><input id="b-desc" placeholder="What does this bucket collect?" /></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="createBucket()">Create</button>
+    </div>
+  `);
+  setTimeout(() => document.getElementById('b-title')?.focus(), 50);
+}
+function createBucket() {
+  const title = document.getElementById('b-title').value.trim();
+  if (!title) return;
+  state.buckets.push({
+    id: uid(), title,
+    description: document.getElementById('b-desc').value.trim(),
+    created: Date.now()
+  });
+  saveAll(); closeModal(); render();
+}
+function renameBucket(id) {
+  const b = state.buckets.find(x => x.id === id);
+  if (!b) return;
+  showModal(`
+    <h3>Edit Bucket</h3>
+    <div class="field"><label>Bucket Title</label><input id="b-title" value="${escapeHtml(b.title)}" /></div>
+    <div class="field"><label>Description</label><input id="b-desc" value="${escapeHtml(b.description||'')}" /></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveBucketEdit('${id}')">Save</button>
+    </div>
+  `);
+}
+function saveBucketEdit(id) {
+  const b = state.buckets.find(x => x.id === id);
+  if (!b) return;
+  b.title = document.getElementById('b-title').value.trim() || b.title;
+  b.description = document.getElementById('b-desc').value.trim();
+  saveAll(); closeModal(); render();
+}
+function deleteBucket(id) {
+  if (!confirm('Delete this bucket? Ideas inside will become unbucketed.')) return;
+  state.buckets = state.buckets.filter(b => b.id !== id);
+  state.ideas.forEach(i => { if (i.bucketId === id) i.bucketId = null; });
+  saveAll(); render();
+}
+
+// ============ WISHLIST ============
+function renderWishlist() {
+  const open = state.wishlist.filter(w => !w.done);
+  const done = state.wishlist.filter(w => w.done);
+
+  return `
+    <div class="header">
+      <div class="header-left">
+        <h2>Wishlist</h2>
+        <p class="greeting">Things you want to build, do, or become</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary btn-ai" onclick="openAIExport('wishlist')">↗ Send to AI</button>
+        <button class="btn-primary" onclick="openWishlistModal()">+ Add</button>
+      </div>
+    </div>
+
+    ${open.length === 0 && done.length === 0
+      ? `<div class="empty"><div class="empty-icon">★</div><p>What would you build if you had infinite time?</p></div>`
+      : `
+        ${open.map(renderWishlistCard).join('')}
+        ${done.length > 0 ? `
+          <div class="section-title" style="margin-top: 32px;">Achieved</div>
+          ${done.map(renderWishlistCard).join('')}
+        ` : ''}
+      `
+    }
+  `;
+}
+
+function renderWishlistCard(w) {
+  return `
+    <div class="wishlist-card ${w.done?'done':''}">
+      <div class="wishlist-check ${w.done?'checked':''}" data-wish="${w.id}"></div>
+      <div class="wishlist-info">
+        <div class="wishlist-title">${escapeHtml(w.title)}</div>
+        ${w.description ? `<div class="wishlist-desc">${escapeHtml(w.description)}</div>` : ''}
+        <div class="wishlist-meta">
+          ${w.category ? `<span class="task-tag" style="background:var(--amber-soft);color:var(--amber)">${escapeHtml(w.category)}</span>` : ''}
+          ${w.timeframe ? `<span class="task-tag" style="background:var(--indigo-soft);color:var(--indigo)">${escapeHtml(w.timeframe)}</span>` : ''}
+        </div>
+      </div>
+      <div class="note-actions">
+        <button class="note-action" onclick="editWish('${w.id}')">Edit</button>
+        <button class="note-action danger" onclick="deleteWish('${w.id}')">×</button>
+      </div>
+    </div>
+  `;
+}
+
+function attachWishlistHandlers() {
+  document.querySelectorAll('[data-wish]').forEach(el => {
+    el.addEventListener('click', () => toggleWish(el.dataset.wish));
+  });
+}
+
+function openWishlistModal() {
+  showModal(`
+    <h3>New Wish</h3>
+    <div class="field"><label>What do you want to build/do/become?</label><input id="w-title" placeholder="e.g. Launch a podcast, learn pottery" /></div>
+    <div class="field"><label>Description / Why</label><textarea id="w-desc" placeholder="Details, motivation..."></textarea></div>
+    <div class="field-row">
+      <div class="field"><label>Category</label><input id="w-cat" placeholder="e.g. Skill" /></div>
+      <div class="field"><label>Timeframe</label><input id="w-time" placeholder="e.g. By 30" /></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="createWish()">Add</button>
+    </div>
+  `);
+  setTimeout(() => document.getElementById('w-title')?.focus(), 50);
+}
+function createWish() {
+  const title = document.getElementById('w-title').value.trim();
+  if (!title) return;
+  state.wishlist.unshift({
+    id: uid(), title,
+    description: document.getElementById('w-desc').value.trim(),
+    category: document.getElementById('w-cat').value.trim(),
+    timeframe: document.getElementById('w-time').value.trim(),
+    done: false, created: Date.now()
+  });
+  saveAll(); closeModal(); render();
+}
+function editWish(id) {
+  const w = state.wishlist.find(x => x.id === id);
+  if (!w) return;
+  showModal(`
+    <h3>Edit Wish</h3>
+    <div class="field"><label>Title</label><input id="w-title" value="${escapeHtml(w.title)}" /></div>
+    <div class="field"><label>Description</label><textarea id="w-desc">${escapeHtml(w.description||'')}</textarea></div>
+    <div class="field-row">
+      <div class="field"><label>Category</label><input id="w-cat" value="${escapeHtml(w.category||'')}" /></div>
+      <div class="field"><label>Timeframe</label><input id="w-time" value="${escapeHtml(w.timeframe||'')}" /></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveWishEdit('${id}')">Save</button>
+    </div>
+  `);
+}
+function saveWishEdit(id) {
+  const w = state.wishlist.find(x => x.id === id);
+  if (!w) return;
+  w.title = document.getElementById('w-title').value.trim() || w.title;
+  w.description = document.getElementById('w-desc').value.trim();
+  w.category = document.getElementById('w-cat').value.trim();
+  w.timeframe = document.getElementById('w-time').value.trim();
+  saveAll(); closeModal(); render();
+}
+function toggleWish(id) {
+  const w = state.wishlist.find(x => x.id === id);
+  if (!w) return;
+  w.done = !w.done;
+  w.completedAt = w.done ? Date.now() : null;
+  saveAll(); render();
+}
+function deleteWish(id) {
+  if (!confirm('Delete this wish?')) return;
+  state.wishlist = state.wishlist.filter(x => x.id !== id);
+  saveAll(); render();
+}
+
+// ============ LEARNING ============
+function renderLearning() {
+  return `
+    <div class="header">
+      <div class="header-left">
+        <h2>Learning</h2>
+        <p class="greeting">What you are growing into</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary btn-ai" onclick="openAIExport('learning')">↗ Send to AI</button>
+        <button class="btn-primary" onclick="openLearningModal()">+ Track</button>
+      </div>
+    </div>
+
+    ${state.learning.length === 0
+      ? `<div class="empty"><div class="empty-icon">✿</div><p>No learning tracks yet.</p></div>`
+      : state.learning.map(renderLearningCard).join('')
+    }
+  `;
+}
+
+function renderLearningCard(l) {
+  const milestones = l.milestones || [];
+  const done = milestones.filter(m => m.done).length;
+  const progress = milestones.length > 0 ? Math.round((done / milestones.length) * 100) : 0;
+
+  return `
+    <div class="learning-card">
+      <div class="learning-header">
+        <div>
+          <div class="learning-title">${escapeHtml(l.title)}</div>
+          ${l.why ? `<div style="font-size:12px;color:var(--ink-muted);margin-top:4px;font-style:italic">Why: ${escapeHtml(l.why)}</div>` : ''}
+        </div>
+        ${l.timeframe ? `<div class="learning-time">${escapeHtml(l.timeframe)}</div>` : ''}
+      </div>
+      ${l.description ? `<div class="learning-desc">${escapeHtml(l.description)}</div>` : ''}
+
+      <div class="milestones">
+        <div class="milestone-label">${done}/${milestones.length} milestones · ${progress}%</div>
+        ${milestones.map((m, i) => `
+          <div class="milestone ${m.done ? 'done' : ''}">
+            <div class="milestone-check ${m.done ? 'checked' : ''}" data-learn="${l.id}" data-mile="${i}"></div>
+            <span class="milestone-text">${escapeHtml(m.text)}</span>
+            <button class="milestone-delete" data-del-mile="${l.id}-${i}">×</button>
+          </div>
+        `).join('')}
+        <div class="milestone" style="margin-top:8px;gap:8px">
+          <input class="add-input" id="mile-input-${l.id}" placeholder="Add milestone..." style="font-size:13px;padding:8px 10px;flex:1" />
+          <button class="btn-secondary" onclick="addMilestone('${l.id}')" style="font-size:11px;">Add</button>
+        </div>
+        <div class="learning-progress-bar"><div class="learning-progress-fill" style="width:${progress}%"></div></div>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;">
+        <button class="btn-secondary btn-ai" onclick="openAIExport('learning:${l.id}')">↗ Send to AI</button>
+        <button class="btn-secondary" onclick="editLearning('${l.id}')">Edit</button>
+        <button class="btn-secondary" onclick="deleteLearning('${l.id}')" style="color:var(--rose); margin-left:auto;">Delete</button>
+      </div>
+    </div>
+  `;
+}
+
+function attachLearningHandlers() {
+  document.querySelectorAll('[data-learn]').forEach(el => {
+    el.addEventListener('click', () => toggleMilestone(el.dataset.learn, parseInt(el.dataset.mile)));
+  });
+  document.querySelectorAll('[data-del-mile]').forEach(el => {
+    el.addEventListener('click', () => {
+      const [id, idx] = el.dataset.delMile.split('-');
+      deleteMilestone(id, parseInt(idx));
+    });
+  });
+  state.learning.forEach(l => {
+    const inp = document.getElementById(`mile-input-${l.id}`);
+    if (inp) inp.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addMilestone(l.id);
+    });
+  });
+}
+
+function openLearningModal() {
+  showModal(`
+    <h3>New Learning Track</h3>
+    <div class="field"><label>What do you want to learn?</label><input id="l-title" placeholder="e.g. Spanish, Rust" /></div>
+    <div class="field"><label>Description</label><textarea id="l-desc" placeholder="What does mastering this look like?"></textarea></div>
+    <div class="field"><label>Why this matters</label><input id="l-why" placeholder="Your motivation" /></div>
+    <div class="field"><label>Timeframe</label><input id="l-time" placeholder="e.g. 3 months" /></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="createLearning()">Start</button>
+    </div>
+  `);
+  setTimeout(() => document.getElementById('l-title')?.focus(), 50);
+}
+function createLearning() {
+  const title = document.getElementById('l-title').value.trim();
+  if (!title) return;
+  state.learning.push({
+    id: uid(), title,
+    description: document.getElementById('l-desc').value.trim(),
+    why: document.getElementById('l-why').value.trim(),
+    timeframe: document.getElementById('l-time').value.trim(),
+    milestones: [], created: Date.now()
+  });
+  saveAll(); closeModal(); render();
+}
+function editLearning(id) {
+  const l = state.learning.find(x => x.id === id);
+  if (!l) return;
+  showModal(`
+    <h3>Edit Learning Track</h3>
+    <div class="field"><label>Title</label><input id="l-title" value="${escapeHtml(l.title)}" /></div>
+    <div class="field"><label>Description</label><textarea id="l-desc">${escapeHtml(l.description || '')}</textarea></div>
+    <div class="field"><label>Why</label><input id="l-why" value="${escapeHtml(l.why || '')}" /></div>
+    <div class="field"><label>Timeframe</label><input id="l-time" value="${escapeHtml(l.timeframe || '')}" /></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveLearningEdit('${id}')">Save</button>
+    </div>
+  `);
+}
+function saveLearningEdit(id) {
+  const l = state.learning.find(x => x.id === id);
+  if (!l) return;
+  l.title = document.getElementById('l-title').value.trim() || l.title;
+  l.description = document.getElementById('l-desc').value.trim();
+  l.why = document.getElementById('l-why').value.trim();
+  l.timeframe = document.getElementById('l-time').value.trim();
+  saveAll(); closeModal(); render();
+}
+function deleteLearning(id) {
+  if (!confirm('Delete this learning track?')) return;
+  state.learning = state.learning.filter(x => x.id !== id);
+  saveAll(); render();
+}
+function addMilestone(learnId) {
+  const inp = document.getElementById(`mile-input-${learnId}`);
+  const text = inp.value.trim();
+  if (!text) return;
+  const l = state.learning.find(x => x.id === learnId);
+  if (!l) return;
+  l.milestones = l.milestones || [];
+  l.milestones.push({ text, done: false });
+  saveAll(); render();
+}
+function toggleMilestone(learnId, idx) {
+  const l = state.learning.find(x => x.id === learnId);
+  if (!l || !l.milestones[idx]) return;
+  l.milestones[idx].done = !l.milestones[idx].done;
+  saveAll(); render();
+}
+function deleteMilestone(learnId, idx) {
+  const l = state.learning.find(x => x.id === learnId);
+  if (!l) return;
+  l.milestones.splice(idx, 1);
+  saveAll(); render();
+}
+
+// ============ MORE (mobile only) ============
+function renderMore() {
+  return `
+    <div class="header">
+      <div class="header-left">
+        <h2>More</h2>
+        <p class="greeting">Other sections and tools</p>
+      </div>
+    </div>
+
+    <div style="display:grid; gap:10px">
+      <button class="project-card" onclick="setView('wishlist')" style="text-align:left">
+        <div class="project-type" style="color:var(--amber)">★ Wishlist</div>
+        <div class="project-title">Wishlist</div>
+        <div class="project-desc">${state.wishlist.filter(w=>!w.done).length} active wishes</div>
+      </button>
+      <button class="project-card" onclick="setView('learning')" style="text-align:left;border-left-color:var(--sage)">
+        <div class="project-type" style="color:var(--sage)">✿ Learning</div>
+        <div class="project-title">Learning Tracks</div>
+        <div class="project-desc">${state.learning.length} tracks in progress</div>
+      </button>
+      <button class="project-card" onclick="setView('short')" style="text-align:left">
+        <div class="project-type" style="color:var(--accent)">○ Short Term</div>
+        <div class="project-title">Short Term Projects</div>
+        <div class="project-desc">${state.projects.filter(p=>p.type==='short' && !p.parentId).length} sprints in motion</div>
+      </button>
+    </div>
+
+    <div class="section-title" style="margin-top:32px">Tools</div>
+    <div style="display:flex; flex-direction:column; gap:8px">
+      <button class="nav-item" onclick="openSyncSettings()" style="background:var(--bg-card);border:1px solid var(--line)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3"/></svg>
+        Sync Settings
+      </button>
+      <button class="nav-item" onclick="openAIExport('all')" style="background:var(--bg-card);border:1px solid var(--line)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        Export Everything for AI
+      </button>
+      <button class="nav-item" onclick="exportData()" style="background:var(--bg-card);border:1px solid var(--line)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/></svg>
+        Download Backup
+      </button>
+      <button class="nav-item" onclick="document.getElementById('import-file').click()" style="background:var(--bg-card);border:1px solid var(--line)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Restore Backup
+      </button>
+    </div>
+  `;
+}
+
+// ============ AI EXPORT ============
+function buildMarkdown(scope) {
+  const today = new Date().toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+  let md = '';
+
+  if (scope === 'all') {
+    md = `# Atlas — Full Context Snapshot\n*Generated ${today}*\n\nThis is a complete snapshot of my personal hub: tasks, projects, learning, ideas, and wishlist. Use this as context for advice, planning, or research.\n\n`;
+    md += sectionTasks();
+    md += sectionProjects('long');
+    md += sectionProjects('short');
+    md += sectionLearning();
+    md += sectionIdeas();
+    md += sectionWishlist();
+  } else if (scope === 'tasks') {
+    md = `# My Tasks\n*Generated ${today}*\n\n` + sectionTasks();
+  } else if (scope === 'projects-long') {
+    md = `# My Long Term Projects\n*Generated ${today}*\n\n` + sectionProjects('long');
+  } else if (scope === 'projects-short') {
+    md = `# My Short Term Projects\n*Generated ${today}*\n\n` + sectionProjects('short');
+  } else if (scope === 'learning') {
+    md = `# My Learning Tracks\n*Generated ${today}*\n\n` + sectionLearning();
+  } else if (scope === 'ideas') {
+    md = `# My Idea Center\n*Generated ${today}*\n\n` + sectionIdeas();
+  } else if (scope === 'wishlist') {
+    md = `# My Wishlist\n*Generated ${today}*\n\n` + sectionWishlist();
+  } else if (scope.startsWith('project:')) {
+    md = sectionSingleProject(scope.split(':')[1], today);
+  } else if (scope.startsWith('learning:')) {
+    md = sectionSingleLearning(scope.split(':')[1], today);
+  }
+  return md;
+}
+
+function sectionTasks() {
+  const open = state.tasks.filter(t => !t.done);
+  if (open.length === 0) return `## Tasks\n*No open tasks.*\n\n`;
+  let s = `## Tasks (Open)\n\n`;
+  open.forEach(t => {
+    const project = t.projectId ? state.projects.find(p => p.id === t.projectId) : null;
+    const meta = [
+      t.priority && `priority: ${t.priority}`,
+      t.due && `due: ${fmtDate(t.due)}${isOverdue(t.due) ? ' (OVERDUE)' : ''}`,
+      project && `project: ${project.title}`
+    ].filter(Boolean).join(', ');
+    s += `- ${t.title}${meta ? ` *(${meta})*` : ''}\n`;
+  });
+  return s + '\n';
+}
+
+function sectionProjects(type) {
+  const list = state.projects.filter(p => p.type === type && !p.parentId);
+  const heading = type === 'long' ? '## Long Term Projects' : '## Short Term Projects';
+  if (list.length === 0) return `${heading}\n*None yet.*\n\n`;
+  let s = `${heading}\n\n`;
+  list.forEach(p => { s += projectToMd(p, 3); });
+  return s;
+}
+
+function projectToMd(p, level) {
+  const hash = '#'.repeat(level);
+  const allTasks = getProjectTasks(p.id);
+  const done = allTasks.filter(t => t.done).length;
+  const progress = allTasks.length > 0 ? Math.round((done/allTasks.length)*100) : 0;
+  const subprojects = state.projects.filter(s => s.parentId === p.id);
+  const directTasks = state.tasks.filter(t => t.projectId === p.id);
+  const notes = p.notes || [];
+  const links = p.links || [];
+
+  let s = `${hash} ${p.title}\n`;
+  if (p.description) s += `${p.description}\n\n`;
+  const meta = [
+    p.deadline && `**Deadline:** ${fmtDate(p.deadline)}`,
+    p.estimate && `**Estimate:** ${p.estimate}`,
+    `**Progress:** ${done}/${allTasks.length} tasks (${progress}%)`
+  ].filter(Boolean);
+  if (meta.length) s += meta.join(' · ') + '\n\n';
+
+  if (directTasks.length > 0) {
+    s += `**Tasks:**\n`;
+    directTasks.forEach(t => {
+      s += `- ${t.done ? '[x]' : '[ ]'} ${t.title}${t.priority ? ` *(${t.priority})*` : ''}${t.due ? ` *(due ${fmtDate(t.due)})*` : ''}\n`;
+    });
+    s += '\n';
+  }
+  if (notes.length > 0) {
+    s += `**Notes:**\n`;
+    notes.forEach(n => { s += `- *${fmtDateTime(n.created)}:* ${n.content.replace(/\n/g, '\n  ')}\n`; });
+    s += '\n';
+  }
+  if (links.length > 0) {
+    s += `**Links:**\n`;
+    links.forEach(l => { s += `- [${l.title}](${l.url})\n`; });
+    s += '\n';
+  }
+  if (subprojects.length > 0) {
+    subprojects.forEach(sub => { s += projectToMd(sub, level + 1); });
+  }
+  return s;
+}
+
+function sectionSingleProject(id, today) {
+  const p = state.projects.find(x => x.id === id);
+  if (!p) return '';
+  let s = `# ${p.title}\n*Generated ${today}*\n\n`;
+  if (p.description) s += `${p.description}\n\n`;
+  s += `**Type:** ${p.type === 'long' ? 'Long Term' : 'Short Term'}\n`;
+  if (p.deadline) s += `**Deadline:** ${fmtDate(p.deadline)}\n`;
+  if (p.estimate) s += `**Estimate:** ${p.estimate}\n`;
+  s += '\n---\n\n' + projectToMd(p, 2).split('\n').slice(2).join('\n');
+  return s;
+}
+
+function sectionLearning() {
+  if (state.learning.length === 0) return `## Learning Tracks\n*None yet.*\n\n`;
+  let s = `## Learning Tracks\n\n`;
+  state.learning.forEach(l => { s += learningToMd(l, 3); });
+  return s;
+}
+
+function learningToMd(l, level) {
+  const hash = '#'.repeat(level);
+  const milestones = l.milestones || [];
+  const done = milestones.filter(m => m.done).length;
+  const progress = milestones.length > 0 ? Math.round((done/milestones.length)*100) : 0;
+  let s = `${hash} ${l.title}\n`;
+  if (l.description) s += `${l.description}\n\n`;
+  const meta = [
+    l.why && `**Why:** ${l.why}`,
+    l.timeframe && `**Timeframe:** ${l.timeframe}`,
+    `**Progress:** ${done}/${milestones.length} milestones (${progress}%)`
+  ].filter(Boolean);
+  if (meta.length) s += meta.join(' · ') + '\n\n';
+  if (milestones.length > 0) {
+    s += `**Milestones:**\n`;
+    milestones.forEach(m => { s += `- ${m.done ? '[x]' : '[ ]'} ${m.text}\n`; });
+    s += '\n';
+  }
+  return s;
+}
+
+function sectionSingleLearning(id, today) {
+  const l = state.learning.find(x => x.id === id);
+  if (!l) return '';
+  return `# Learning: ${l.title}\n*Generated ${today}*\n\n` + learningToMd(l, 2).split('\n').slice(2).join('\n');
+}
+
+function sectionIdeas() {
+  if (state.ideas.length === 0) return `## Ideas\n*No ideas captured yet.*\n\n`;
+  let s = `## Ideas\n\n`;
+  state.buckets.forEach(b => {
+    const bucketIdeas = state.ideas.filter(i => i.bucketId === b.id);
+    if (bucketIdeas.length === 0) return;
+    s += `### ${b.title}\n`;
+    if (b.description) s += `*${b.description}*\n\n`;
+    bucketIdeas.sort((a,b) => b.created - a.created).forEach(i => {
+      s += `- ${i.content.replace(/\n/g, '\n  ')} *(${fmtDateTime(i.created)})*\n`;
+    });
+    s += '\n';
+  });
+  const unbucketed = state.ideas.filter(i => !i.bucketId);
+  if (unbucketed.length > 0) {
+    s += `### Unbucketed\n`;
+    unbucketed.sort((a,b) => b.created - a.created).forEach(i => {
+      s += `- ${i.content.replace(/\n/g, '\n  ')} *(${fmtDateTime(i.created)})*\n`;
+    });
+    s += '\n';
+  }
+  return s;
+}
+
+function sectionWishlist() {
+  const open = state.wishlist.filter(w => !w.done);
+  const done = state.wishlist.filter(w => w.done);
+  if (open.length === 0 && done.length === 0) return `## Wishlist\n*Empty.*\n\n`;
+  let s = `## Wishlist\n\n`;
+  if (open.length > 0) {
+    s += `### Active\n\n`;
+    open.forEach(w => {
+      s += `- **${w.title}**`;
+      const meta = [w.category, w.timeframe].filter(Boolean).join(' · ');
+      if (meta) s += ` *(${meta})*`;
+      s += '\n';
+      if (w.description) s += `  ${w.description.replace(/\n/g, '\n  ')}\n`;
+    });
+    s += '\n';
+  }
+  if (done.length > 0) {
+    s += `### Achieved\n\n`;
+    done.forEach(w => { s += `- ✓ ${w.title}\n`; });
+    s += '\n';
+  }
+  return s;
+}
+
+function openAIExport(scope) {
+  const md = buildMarkdown(scope);
+  const titles = {
+    all: 'Everything', tasks: 'Tasks',
+    'projects-long': 'Long Term Projects', 'projects-short': 'Short Term Projects',
+    learning: 'Learning Tracks', ideas: 'Ideas', wishlist: 'Wishlist'
+  };
+  let title = titles[scope] || 'Selection';
+  if (scope.startsWith('project:')) {
+    const p = state.projects.find(x => x.id === scope.split(':')[1]);
+    if (p) title = `Project: ${p.title}`;
+  } else if (scope.startsWith('learning:')) {
+    const l = state.learning.find(x => x.id === scope.split(':')[1]);
+    if (l) title = `Learning: ${l.title}`;
+  }
+
+  showModal(`
+    <h3>↗ Send to AI: ${escapeHtml(title)}</h3>
+    <div class="ai-export-hint">Markdown formatted for Claude, NotebookLM, ChatGPT, or any AI tool.</div>
+    <textarea class="ai-export-textarea" id="ai-export-text">${escapeHtml(md)}</textarea>
+    <div class="ai-export-actions">
+      <button class="btn-primary" onclick="copyAIExport()">Copy</button>
+      <button class="btn-secondary" onclick="downloadAIExport('${scope}')">Download .md</button>
+      <button class="btn-secondary" style="margin-left:auto" onclick="closeModal()">Close</button>
+    </div>
+  `);
+}
+
+function copyAIExport() {
+  const text = document.getElementById('ai-export-text').value;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('Copied. Paste into Claude or NotebookLM.');
+    }).catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+function fallbackCopy(text) {
+  const ta = document.getElementById('ai-export-text');
+  ta.select();
+  try { document.execCommand('copy'); showToast('Copied.'); }
+  catch(e) { showToast('Copy failed, please select and copy manually'); }
+}
+
+function downloadAIExport(scope) {
+  const text = document.getElementById('ai-export-text').value;
+  const blob = new Blob([text], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const date = new Date().toISOString().split('T')[0];
+  a.href = url;
+  a.download = `atlas-${scope.replace(':', '-')}-${date}.md`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Markdown downloaded');
+}
+
+// ============ MODAL ============
+function showModal(html) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'modal-overlay';
+  overlay.innerHTML = `<div class="modal" onclick="event.stopPropagation()">${html}</div>`;
+  overlay.addEventListener('click', closeModal);
+  document.body.appendChild(overlay);
+}
+function closeModal() {
+  const m = document.getElementById('modal-overlay');
+  if (m) m.remove();
+}
+
+// ============ MOBILE MENU ============
+function openMobileMenu() {
+  document.getElementById('mobile-menu').classList.add('open');
+  document.querySelector('.mobile-menu-overlay').classList.add('open');
+}
+function closeMobileMenu() {
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.querySelector('.mobile-menu-overlay').classList.remove('open');
+}
+
+// ============ FAB ============
+function handleFab() {
+  // Context-aware: action depends on current view
+  if (state.currentProject) {
+    state.currentProjectTab = 'tasks';
+    render();
+    setTimeout(() => document.getElementById('ptask-input')?.focus(), 100);
+    return;
+  }
+  switch(state.currentView) {
+    case 'tasks': setView('tasks'); setTimeout(()=>document.getElementById('task-input')?.focus(),100); break;
+    case 'long': openProjectModal('long'); break;
+    case 'short': openProjectModal('short'); break;
+    case 'ideas': setView('ideas'); setTimeout(()=>document.getElementById('idea-input')?.focus(),100); break;
+    case 'wishlist': openWishlistModal(); break;
+    case 'learning': openLearningModal(); break;
+    case 'dashboard':
+    default:
+      setView('tasks');
+      setTimeout(()=>document.getElementById('task-input')?.focus(),100);
+  }
+}
+
+// ============ NAV ============
+function setView(view) {
+  state.currentView = view;
+  state.currentProject = null;
+  render();
+}
+
+document.querySelectorAll('.nav-item[data-view], .bn-item[data-view]').forEach(el => {
+  el.addEventListener('click', () => setView(el.dataset.view));
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { closeModal(); closeMobileMenu(); }
+});
+
+// Globals
+Object.assign(window, {
+  setView, addTask, toggleTask, deleteTask, clearDone,
+  openProjectModal, createProject, editProject, saveProjectEdit, deleteProject,
+  openProject, addProjectTask, addProjectNote, deleteProjectNote, addProjectLink, deleteProjectLink,
+  openLearningModal, createLearning, editLearning, saveLearningEdit, deleteLearning,
+  addMilestone, toggleMilestone, deleteMilestone,
+  closeModal, exportData, importData, quickCaptureIdea,
+  addIdea, deleteIdea, moveIdea, confirmMoveIdea,
+  openBucketModal, createBucket, renameBucket, saveBucketEdit, deleteBucket,
+  openWishlistModal, createWish, editWish, saveWishEdit, toggleWish, deleteWish,
+  openAIExport, copyAIExport, downloadAIExport,
+  openSyncSettings, saveSyncSettings, workerSignIn, workerSignOut, manualSync,
+  signInToGoogle, signOutGoogle,
+  openMobileMenu, closeMobileMenu, handleFab
+});
+
+// Init
+loadSettings();
+loadAll();
+</script>
+</body>
+</html>
