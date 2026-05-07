@@ -1393,6 +1393,186 @@ input, textarea, select { font-family: inherit; }
   .stats-grid { grid-template-columns: 1fr; }
   .bn-label { font-size: 9px; }
 }
+
+/* ========= v5: Recurrence + detail views ========= */
+.tag-recur {
+  background: var(--plum-soft);
+  color: var(--plum);
+}
+.tag-recur-active {
+  background: var(--sage-soft);
+  color: var(--sage);
+}
+.tag-reminder {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+.task { cursor: pointer; }
+.task-content { cursor: pointer; }
+.idea-item { cursor: pointer; }
+
+/* Detail modal: wider for deep views */
+.modal.modal-wide { max-width: 720px; }
+
+/* Section headers within detail modals */
+.detail-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-soft);
+}
+.detail-section:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+.detail-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.detail-section-title .ds-action {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.detail-section-title .ds-action:hover { background: var(--accent-soft); }
+
+.detail-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.detail-stat {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+.detail-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.detail-stat-value {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.linked-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+.linked-item:hover { border-color: var(--ink-muted); }
+.linked-item-title {
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 500;
+}
+.linked-item-meta {
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+.linked-remove {
+  background: none;
+  border: none;
+  color: var(--rose);
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.recur-options {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.recur-pill {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--ink-soft);
+  transition: all 0.15s;
+}
+.recur-pill:hover { border-color: var(--ink-muted); }
+.recur-pill.active {
+  background: var(--plum);
+  color: white;
+  border-color: var(--plum);
+}
+.day-toggles {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+.day-toggle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--bg-card);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+.day-toggle.active {
+  background: var(--plum);
+  color: white;
+  border-color: var(--plum);
+}
+
+.detail-desc {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+}
+.detail-desc.empty {
+  color: var(--ink-muted);
+  font-style: italic;
+}
+
+.idea-edit-form .field { margin-bottom: 10px; }
+
+@media (max-width: 600px) {
+  .modal.modal-wide { max-width: 100%; }
+  .detail-summary-grid { grid-template-columns: repeat(2, 1fr); }
+}
 </style>
 </head>
 <body>
@@ -1590,6 +1770,10 @@ let state = {
   currentProjectTab: 'tasks',
   collapsedBuckets: {},
   ideaFilter: 'all',
+  recurringCompletions: {},  // { 'taskId|YYYY-MM-DD': true }
+  reminderTime: '09:00',     // HH:MM, when daily reminders fire
+  remindersEnabled: false,
+  lastReminderDate: null,    // YYYY-MM-DD, so we only fire once a day
   lastModified: 0
 };
 
@@ -1641,6 +1825,10 @@ function loadAll() {
         ideas: data.ideas || [],
         buckets: data.buckets || [],
         wishlist: data.wishlist || [],
+        recurringCompletions: data.recurringCompletions || {},
+        reminderTime: data.reminderTime || '09:00',
+        remindersEnabled: data.remindersEnabled || false,
+        lastReminderDate: data.lastReminderDate || null,
         lastModified: data.lastModified || 0
       });
     }
@@ -1660,14 +1848,27 @@ function loadAll() {
         saveLocal();
       }
     });
-    // Backfill new fields for v3 → v4 migration
+    // Backfill new fields for v3 -> v4 migration
     state.tasks.forEach(t => {
       if (t.satisfaction === undefined) t.satisfaction = null;
       if (!t.workLog) t.workLog = [];
+      // v4 -> v5: recurrence, description, links, reminders
+      if (t.recurrence === undefined) t.recurrence = null;       // null | 'daily' | 'weekly' | 'alternate' | { type:'custom', days:[0..6] }
+      if (t.reminder === undefined) t.reminder = null;           // null | 'HH:MM'
+      if (t.description === undefined) t.description = '';
+      if (!t.linkedTasks) t.linkedTasks = [];                    // [taskId,...]
+      if (!t.notes) t.notes = [];                                // [{content, created}]
     });
     state.projects.forEach(p => {
       if (p.satisfaction === undefined) p.satisfaction = null;
       if (!p.workLog) p.workLog = [];
+    });
+    state.ideas.forEach(i => {
+      // v4 -> v5: ideas get optional title, description, notes, conversion link
+      if (i.title === undefined) i.title = '';
+      if (i.description === undefined) i.description = '';
+      if (!i.notes) i.notes = [];
+      if (i.convertedToProjectId === undefined) i.convertedToProjectId = null;
     });
   } catch (e) {
     console.error('Load failed:', e);
@@ -1678,6 +1879,8 @@ function loadAll() {
   if (syncState.workerUrl) {
     workerPullOnLoad();
   }
+  // Boot the recurrence/reminder loop
+  setupReminderLoop();
 }
 
 function saveLocal() {
@@ -1690,6 +1893,10 @@ function saveLocal() {
       ideas: state.ideas,
       buckets: state.buckets,
       wishlist: state.wishlist,
+      recurringCompletions: state.recurringCompletions,
+      reminderTime: state.reminderTime,
+      remindersEnabled: state.remindersEnabled,
+      lastReminderDate: state.lastReminderDate,
       lastModified: state.lastModified
     }));
   } catch (e) {
@@ -1704,6 +1911,211 @@ function saveAll() {
     if (syncState.saveTimer) clearTimeout(syncState.saveTimer);
     syncState.saveTimer = setTimeout(workerPush, 1500);
   }
+}
+
+// ============ RECURRENCE + REMINDERS ============
+// Day-of-week names for custom recurrence: 0=Sun ... 6=Sat
+const DAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const DAY_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+// Is a recurring task scheduled for a given date?
+// Returns true if the task should appear / be due on that date.
+function isRecurringDueOn(task, date) {
+  if (!task.recurrence) return false;
+  const r = task.recurrence;
+  const d = new Date(date);
+  const dow = d.getDay();
+
+  if (r === 'daily') return true;
+  if (r === 'weekly') {
+    // weekly = same day-of-week as when the task was created
+    const created = new Date(task.created);
+    return created.getDay() === dow;
+  }
+  if (r === 'alternate') {
+    // every other day, anchored on creation date
+    const created = new Date(task.created);
+    const startDay = new Date(created.getFullYear(), created.getMonth(), created.getDate());
+    const today = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const diffDays = Math.round((today - startDay) / 86400000);
+    return diffDays >= 0 && diffDays % 2 === 0;
+  }
+  if (typeof r === 'object' && r.type === 'custom' && Array.isArray(r.days)) {
+    return r.days.includes(dow);
+  }
+  return false;
+}
+
+// Has a recurring task been completed for a specific date?
+function isRecurringDoneOn(taskId, dateStr) {
+  return !!state.recurringCompletions[`${taskId}|${dateStr}`];
+}
+
+// Mark a recurring task complete (or uncomplete) for a date.
+function setRecurringDone(taskId, dateStr, done) {
+  const key = `${taskId}|${dateStr}`;
+  if (done) state.recurringCompletions[key] = true;
+  else delete state.recurringCompletions[key];
+}
+
+// Human-readable label for a recurrence value
+function recurrenceLabel(r) {
+  if (!r) return '';
+  if (r === 'daily') return 'Every day';
+  if (r === 'weekly') return 'Every week';
+  if (r === 'alternate') return 'Every other day';
+  if (typeof r === 'object' && r.type === 'custom') {
+    if (!r.days || r.days.length === 0) return 'Custom (none set)';
+    if (r.days.length === 7) return 'Every day';
+    return r.days.sort().map(d => ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d]).join(', ');
+  }
+  return '';
+}
+
+// True if a task should show today (either non-recurring with due=today,
+// or recurring + scheduled for today + not yet ticked off today)
+function isTaskActiveToday(t) {
+  const today = todayStr();
+  if (t.recurrence) {
+    return isRecurringDueOn(t, new Date()) && !isRecurringDoneOn(t.id, today);
+  }
+  return !t.done && t.due && new Date(t.due).toDateString() === new Date().toDateString();
+}
+
+// One-time daily sweep: on a fresh day, garbage-collect old recurring
+// completion records to keep storage small (older than 60 days).
+function gcRecurringCompletions() {
+  const cutoff = Date.now() - 60 * 86400000;
+  Object.keys(state.recurringCompletions).forEach(key => {
+    const dateStr = key.split('|')[1];
+    if (!dateStr) return;
+    const d = new Date(dateStr).getTime();
+    if (d && d < cutoff) delete state.recurringCompletions[key];
+  });
+}
+
+// ----- Reminder notification loop -----
+// Approach: fire a single "morning briefing" notification at reminderTime
+// listing today's recurring + due tasks. We use the in-tab Notification API,
+// which works while the app/PWA is open. We don't pretend to be a backend
+// scheduler.
+let _reminderInterval = null;
+function setupReminderLoop() {
+  if (_reminderInterval) clearInterval(_reminderInterval);
+  // Check every 60s. Cheap.
+  _reminderInterval = setInterval(checkRemindersTick, 60 * 1000);
+  // Also check immediately in case we just opened the app at the right time
+  setTimeout(checkRemindersTick, 1500);
+}
+
+function checkRemindersTick() {
+  if (!state.remindersEnabled) return;
+  if (typeof Notification === 'undefined') return;
+  if (Notification.permission !== 'granted') return;
+
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const currentTime = `${hh}:${mm}`;
+  const today = todayStr();
+
+  if (state.lastReminderDate === today) return; // already fired today
+  if (currentTime < state.reminderTime) return; // not yet time
+
+  // Build list of tasks active today
+  const activeTasks = state.tasks.filter(isTaskActiveToday);
+  if (activeTasks.length === 0) {
+    state.lastReminderDate = today;
+    saveAll();
+    return;
+  }
+
+  const titles = activeTasks.slice(0, 4).map(t => '• ' + t.title).join('\n');
+  const more = activeTasks.length > 4 ? `\n+${activeTasks.length - 4} more` : '';
+  try {
+    new Notification('Atlas · Today\'s tasks', {
+      body: titles + more,
+      icon: '',
+      tag: 'atlas-daily'
+    });
+  } catch (e) { /* some browsers throw */ }
+
+  state.lastReminderDate = today;
+  // Also GC stale completions on each new day
+  gcRecurringCompletions();
+  saveAll();
+}
+
+async function requestNotificationPermission() {
+  if (typeof Notification === 'undefined') {
+    showToast('Notifications not supported in this browser');
+    return false;
+  }
+  if (Notification.permission === 'granted') return true;
+  if (Notification.permission === 'denied') {
+    showToast('Notifications blocked. Enable them in browser settings.');
+    return false;
+  }
+  const result = await Notification.requestPermission();
+  return result === 'granted';
+}
+
+async function toggleReminders() {
+  if (state.remindersEnabled) {
+    state.remindersEnabled = false;
+    saveAll();
+    showToast('Reminders off');
+    closeModal();
+    openReminderSettings();
+    return;
+  }
+  const granted = await requestNotificationPermission();
+  if (!granted) return;
+  state.remindersEnabled = true;
+  state.lastReminderDate = null; // allow today's fire if time has passed... actually keep it, see below
+  saveAll();
+  showToast('Reminders on');
+  closeModal();
+  openReminderSettings();
+}
+
+function openReminderSettings() {
+  const supported = typeof Notification !== 'undefined';
+  const perm = supported ? Notification.permission : 'unsupported';
+  showModal(`
+    <h3>Daily reminders</h3>
+    <div style="font-size:13px;color:var(--ink-soft);margin-bottom:14px;line-height:1.6">
+      Get a single morning ping with everything on your plate today, including recurring tasks. Works while Atlas is open in a tab or installed as an app.
+    </div>
+    <div class="field">
+      <label>Status</label>
+      <div style="font-size:13px">
+        ${perm === 'unsupported' ? '⚠ Browser does not support notifications.' :
+          perm === 'denied' ? '⚠ Blocked. Enable in browser site settings.' :
+          state.remindersEnabled ? '✓ Reminders are on' : '○ Reminders are off'}
+      </div>
+    </div>
+    <div class="field">
+      <label>Reminder time</label>
+      <input type="time" id="rem-time" value="${state.reminderTime || '09:00'}" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-secondary" onclick="saveReminderTime()">Save time</button>
+      <button class="btn-primary" onclick="toggleReminders()">${state.remindersEnabled ? 'Turn off' : 'Turn on'}</button>
+    </div>
+  `);
+}
+
+function saveReminderTime() {
+  const v = document.getElementById('rem-time')?.value;
+  if (v) {
+    state.reminderTime = v;
+    state.lastReminderDate = null; // allow re-fire today if new time hasn't passed
+    saveAll();
+    showToast('Time saved');
+  }
+  closeModal();
 }
 
 // ============ WORKER SYNC ============
@@ -1761,7 +2173,25 @@ async function workerPullOnLoad() {
         ideas: data.ideas || [],
         buckets: data.buckets || [],
         wishlist: data.wishlist || [],
+        recurringCompletions: data.recurringCompletions || {},
+        reminderTime: data.reminderTime || state.reminderTime,
+        remindersEnabled: data.remindersEnabled !== undefined ? data.remindersEnabled : state.remindersEnabled,
+        lastReminderDate: data.lastReminderDate || state.lastReminderDate,
         lastModified: data.lastModified
+      });
+      // Re-run backfills in case pulled data is from older client
+      state.tasks.forEach(t => {
+        if (t.recurrence === undefined) t.recurrence = null;
+        if (t.reminder === undefined) t.reminder = null;
+        if (t.description === undefined) t.description = '';
+        if (!t.linkedTasks) t.linkedTasks = [];
+        if (!t.notes) t.notes = [];
+      });
+      state.ideas.forEach(i => {
+        if (i.title === undefined) i.title = '';
+        if (i.description === undefined) i.description = '';
+        if (!i.notes) i.notes = [];
+        if (i.convertedToProjectId === undefined) i.convertedToProjectId = null;
       });
       saveLocal();
       render();
@@ -1790,6 +2220,10 @@ async function workerPush(silent = false) {
       ideas: state.ideas,
       buckets: state.buckets,
       wishlist: state.wishlist,
+      recurringCompletions: state.recurringCompletions,
+      reminderTime: state.reminderTime,
+      remindersEnabled: state.remindersEnabled,
+      lastReminderDate: state.lastReminderDate,
       lastModified: state.lastModified
     });
     const res = await fetch(syncState.workerUrl + '/data', {
@@ -1925,7 +2359,11 @@ function exportData() {
   const data = {
     tasks: state.tasks, projects: state.projects, learning: state.learning,
     ideas: state.ideas, buckets: state.buckets, wishlist: state.wishlist,
-    exportedAt: new Date().toISOString(), version: 3
+    recurringCompletions: state.recurringCompletions,
+    reminderTime: state.reminderTime,
+    remindersEnabled: state.remindersEnabled,
+    lastReminderDate: state.lastReminderDate,
+    exportedAt: new Date().toISOString(), version: 5
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -1951,6 +2389,26 @@ function importData(event) {
       state.ideas = data.ideas || [];
       state.buckets = data.buckets || [];
       state.wishlist = data.wishlist || [];
+      state.recurringCompletions = data.recurringCompletions || {};
+      if (data.reminderTime) state.reminderTime = data.reminderTime;
+      if (data.remindersEnabled !== undefined) state.remindersEnabled = data.remindersEnabled;
+      if (data.lastReminderDate) state.lastReminderDate = data.lastReminderDate;
+      // Re-run backfills
+      state.tasks.forEach(t => {
+        if (t.recurrence === undefined) t.recurrence = null;
+        if (t.reminder === undefined) t.reminder = null;
+        if (t.description === undefined) t.description = '';
+        if (!t.linkedTasks) t.linkedTasks = [];
+        if (!t.notes) t.notes = [];
+        if (t.satisfaction === undefined) t.satisfaction = null;
+        if (!t.workLog) t.workLog = [];
+      });
+      state.ideas.forEach(i => {
+        if (i.title === undefined) i.title = '';
+        if (i.description === undefined) i.description = '';
+        if (!i.notes) i.notes = [];
+        if (i.convertedToProjectId === undefined) i.convertedToProjectId = null;
+      });
       saveAll(); render();
       showToast('Backup restored');
     } catch (err) { showToast('Invalid backup file'); }
@@ -2181,6 +2639,664 @@ function closeModalAndRender() {
   render();
 }
 
+// ============ TASK DETAIL + EDIT ============
+function openTaskDetail(id) {
+  const t = state.tasks.find(x => x.id === id);
+  if (!t) return;
+  const project = t.projectId ? state.projects.find(p => p.id === t.projectId) : null;
+  const stats = workLogStats(t.workLog);
+  const log = t.workLog || [];
+  const recentLog = log.slice(0, 5);
+  const isRec = !!t.recurrence;
+  const today = todayStr();
+  const visuallyDone = isRec ? isRecurringDoneOn(t.id, today) : t.done;
+
+  // Linked tasks
+  const linked = (t.linkedTasks || [])
+    .map(lid => state.tasks.find(x => x.id === lid))
+    .filter(Boolean);
+
+  // Notes
+  const notes = t.notes || [];
+
+  showModal(`
+    <div class="modal-wide-content">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px">
+        <h3 style="margin-bottom:0;flex:1">${escapeHtml(t.title)}</h3>
+        <button class="checkbox ${visuallyDone ? 'checked' : ''}" style="flex-shrink:0;margin-top:4px" onclick="toggleTask('${t.id}'); closeModal(); openTaskDetail('${t.id}')" title="${visuallyDone ? 'Unmark' : 'Mark complete'}"></button>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+        ${t.priority ? `<span class="task-tag tag-priority-${t.priority}">${t.priority === 'med' ? 'medium' : t.priority}</span>` : ''}
+        ${project ? `<span class="task-tag tag-project">${escapeHtml(project.title)}</span>` : ''}
+        ${t.due && !isRec ? `<span class="task-tag tag-due ${isOverdue(t.due) && !t.done ? 'overdue' : ''}">${fmtDate(t.due)}${isOverdue(t.due) && !t.done ? ' · overdue' : ''}</span>` : ''}
+        ${isRec ? `<span class="task-tag tag-recur">↻ ${escapeHtml(recurrenceLabel(t.recurrence))}</span>` : ''}
+        ${t.reminder ? `<span class="task-tag tag-reminder">⏰ ${escapeHtml(t.reminder)}</span>` : ''}
+      </div>
+
+      <div class="detail-summary-grid">
+        <div class="detail-stat">
+          <div class="detail-stat-label">Satisfaction</div>
+          <div class="detail-stat-value">${t.satisfaction != null ? `${t.satisfaction}/10` : '—'}</div>
+        </div>
+        <div class="detail-stat">
+          <div class="detail-stat-label">Days worked</div>
+          <div class="detail-stat-value">${stats.count}</div>
+        </div>
+        <div class="detail-stat">
+          <div class="detail-stat-label">Streak</div>
+          <div class="detail-stat-value">${stats.streak > 0 ? `🔥 ${stats.streak}` : '—'}</div>
+        </div>
+        <div class="detail-stat">
+          <div class="detail-stat-label">Status</div>
+          <div class="detail-stat-value" style="font-size:13px">${visuallyDone ? '✓ Done' + (isRec ? ' today' : '') : (isRec ? 'Active' : 'Open')}</div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Description
+          <button class="ds-action" onclick="closeModal(); editTask('${t.id}')">Edit</button>
+        </div>
+        <div class="detail-desc ${!t.description ? 'empty' : ''}">${t.description ? escapeHtml(t.description) : 'No description yet. Add one to capture context.'}</div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Linked Tasks
+          <button class="ds-action" onclick="openLinkTaskPicker('${t.id}')">+ Link</button>
+        </div>
+        ${linked.length === 0
+          ? `<div style="font-size:12px;color:var(--ink-muted);font-style:italic">No linked tasks. Link related work to keep context together.</div>`
+          : linked.map(lt => {
+              const lp = lt.projectId ? state.projects.find(p => p.id === lt.projectId) : null;
+              const ldone = lt.recurrence ? isRecurringDoneOn(lt.id, today) : lt.done;
+              return `
+                <div class="linked-item" onclick="closeModal(); openTaskDetail('${lt.id}')">
+                  <div>
+                    <div class="linked-item-title">${ldone ? '✓ ' : ''}${escapeHtml(lt.title)}</div>
+                    <div class="linked-item-meta">${lp ? escapeHtml(lp.title) + ' · ' : ''}${lt.recurrence ? 'recurring' : (lt.done ? 'done' : 'open')}</div>
+                  </div>
+                  <button class="linked-remove" onclick="event.stopPropagation(); unlinkTask('${t.id}', '${lt.id}')">unlink</button>
+                </div>
+              `;
+            }).join('')
+        }
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Recent Work Log
+          <button class="ds-action" onclick="closeModal(); openWorkLogModal('task', '${t.id}')">+ Log</button>
+        </div>
+        ${recentLog.length === 0
+          ? `<div style="font-size:12px;color:var(--ink-muted);font-style:italic">No sessions logged yet.</div>`
+          : recentLog.map(e => `
+            <div class="work-log-entry">
+              <div class="work-log-date">${fmtDateTime(e.date)}${e.mode === 'simple' ? ' · quick log' : ''}</div>
+              ${e.note ? `<div class="work-log-note">${escapeHtml(e.note)}</div>` : ''}
+              ${e.left ? `<div class="work-log-left"><strong>What's left:</strong> ${escapeHtml(e.left)}</div>` : ''}
+            </div>
+          `).join('')
+        }
+        ${log.length > 5 ? `<div style="font-size:11px;color:var(--ink-muted);margin-top:6px">Showing 5 of ${log.length}</div>` : ''}
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Notes
+          <button class="ds-action" onclick="addTaskNoteFromDetail('${t.id}')">+ Add</button>
+        </div>
+        <textarea id="task-note-input" placeholder="Quick note... (Ctrl+Enter to save)" style="width:100%;font-size:13px;padding:10px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--ink);resize:vertical;min-height:60px;margin-bottom:8px;font-family:inherit"></textarea>
+        ${notes.length === 0
+          ? `<div style="font-size:12px;color:var(--ink-muted);font-style:italic">No notes yet.</div>`
+          : notes.map((n, i) => `
+            <div class="note-card" style="margin-bottom:8px">
+              <div class="note-header">
+                <div class="note-date">${fmtDateTime(n.created)}</div>
+                <div class="note-actions">
+                  <button class="note-action danger" onclick="deleteTaskNote('${t.id}', ${i})">Delete</button>
+                </div>
+              </div>
+              <div class="note-content">${escapeHtml(n.content)}</div>
+            </div>
+          `).join('')
+        }
+      </div>
+
+      <div class="modal-actions" style="margin-top:24px">
+        <button class="btn-secondary" onclick="closeModal()">Close</button>
+        <button class="btn-secondary btn-ai" onclick="openAIExport('task:${t.id}')">↗ AI</button>
+        <button class="btn-secondary" onclick="openSatisfactionModal('task','${t.id}')">★ Rate</button>
+        <button class="btn-primary" onclick="closeModal(); editTask('${t.id}')">Edit Task</button>
+      </div>
+    </div>
+  `, 'modal-wide');
+
+  // Wire Ctrl+Enter for note add
+  setTimeout(() => {
+    const ta = document.getElementById('task-note-input');
+    if (ta) {
+      ta.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') addTaskNoteFromDetail(t.id);
+      });
+    }
+  }, 50);
+}
+
+function addTaskNoteFromDetail(taskId) {
+  const ta = document.getElementById('task-note-input');
+  if (!ta) return;
+  const content = ta.value.trim();
+  if (!content) return;
+  const t = state.tasks.find(x => x.id === taskId);
+  if (!t) return;
+  t.notes = t.notes || [];
+  t.notes.unshift({ content, created: Date.now() });
+  saveAll();
+  closeModal();
+  openTaskDetail(taskId);
+}
+
+function deleteTaskNote(taskId, idx) {
+  const t = state.tasks.find(x => x.id === taskId);
+  if (!t || !t.notes) return;
+  t.notes.splice(idx, 1);
+  saveAll();
+  closeModal();
+  openTaskDetail(taskId);
+}
+
+function unlinkTask(taskId, otherId) {
+  const t = state.tasks.find(x => x.id === taskId);
+  const o = state.tasks.find(x => x.id === otherId);
+  if (t && t.linkedTasks) t.linkedTasks = t.linkedTasks.filter(x => x !== otherId);
+  if (o && o.linkedTasks) o.linkedTasks = o.linkedTasks.filter(x => x !== taskId);
+  saveAll();
+  closeModal();
+  openTaskDetail(taskId);
+}
+
+function openLinkTaskPicker(taskId) {
+  const t = state.tasks.find(x => x.id === taskId);
+  if (!t) return;
+  const linked = new Set(t.linkedTasks || []);
+  const candidates = state.tasks.filter(x => x.id !== taskId && !linked.has(x.id));
+  if (candidates.length === 0) {
+    showToast('No other tasks to link');
+    return;
+  }
+  closeModal();
+  showModal(`
+    <h3>Link a Task</h3>
+    <div style="font-size:13px;color:var(--ink-soft);margin-bottom:14px">
+      Pick a task to connect with <strong>${escapeHtml(t.title)}</strong>.
+    </div>
+    <div class="field">
+      <input id="link-search" placeholder="Search tasks..." oninput="filterLinkPicker()" />
+    </div>
+    <div id="link-picker-list" style="max-height:300px;overflow-y:auto">
+      ${candidates.map(c => {
+        const cp = c.projectId ? state.projects.find(p => p.id === c.projectId) : null;
+        return `
+          <div class="linked-item link-pick-row" data-search="${escapeHtml((c.title + ' ' + (cp?.title || '')).toLowerCase())}" onclick="confirmLinkTask('${taskId}', '${c.id}')">
+            <div>
+              <div class="linked-item-title">${escapeHtml(c.title)}</div>
+              <div class="linked-item-meta">${cp ? escapeHtml(cp.title) + ' · ' : ''}${c.recurrence ? 'recurring' : (c.done ? 'done' : 'open')}</div>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal(); openTaskDetail('${taskId}')">Back</button>
+    </div>
+  `, 'modal-wide');
+  setTimeout(() => document.getElementById('link-search')?.focus(), 50);
+}
+
+function filterLinkPicker() {
+  const q = (document.getElementById('link-search')?.value || '').toLowerCase().trim();
+  document.querySelectorAll('.link-pick-row').forEach(el => {
+    const data = el.dataset.search || '';
+    el.style.display = (!q || data.includes(q)) ? '' : 'none';
+  });
+}
+
+function confirmLinkTask(taskId, otherId) {
+  const t = state.tasks.find(x => x.id === taskId);
+  const o = state.tasks.find(x => x.id === otherId);
+  if (!t || !o) return;
+  t.linkedTasks = t.linkedTasks || [];
+  o.linkedTasks = o.linkedTasks || [];
+  if (!t.linkedTasks.includes(otherId)) t.linkedTasks.push(otherId);
+  if (!o.linkedTasks.includes(taskId)) o.linkedTasks.push(taskId);
+  saveAll();
+  closeModal();
+  openTaskDetail(taskId);
+}
+
+function editTask(id) {
+  const t = state.tasks.find(x => x.id === id);
+  if (!t) return;
+  // Determine current recurrence preset
+  let recPreset = 'none';
+  let customDays = [];
+  if (t.recurrence === 'daily') recPreset = 'daily';
+  else if (t.recurrence === 'weekly') recPreset = 'weekly';
+  else if (t.recurrence === 'alternate') recPreset = 'alternate';
+  else if (t.recurrence && typeof t.recurrence === 'object' && t.recurrence.type === 'custom') {
+    recPreset = 'custom';
+    customDays = t.recurrence.days || [];
+  }
+  // Stash on closure for the day toggles
+  window._editTaskCustomDays = customDays.slice();
+
+  showModal(`
+    <h3>Edit Task</h3>
+    <div class="field"><label>Title</label><input id="et-title" value="${escapeHtml(t.title)}" /></div>
+    <div class="field"><label>Description</label><textarea id="et-desc" placeholder="Context, notes, anything that helps">${escapeHtml(t.description || '')}</textarea></div>
+    <div class="field-row">
+      <div class="field"><label>Priority</label>
+        <select id="et-priority">
+          <option value="" ${!t.priority?'selected':''}>None</option>
+          <option value="high" ${t.priority==='high'?'selected':''}>High</option>
+          <option value="med" ${t.priority==='med'?'selected':''}>Medium</option>
+          <option value="low" ${t.priority==='low'?'selected':''}>Low</option>
+        </select>
+      </div>
+      <div class="field"><label>Due date</label><input type="date" id="et-due" value="${t.due || ''}" /></div>
+    </div>
+    <div class="field"><label>Project</label>
+      <select id="et-project">
+        <option value="">No project</option>
+        ${state.projects.map(p => `<option value="${p.id}" ${t.projectId===p.id?'selected':''}>${escapeHtml(p.title)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="field">
+      <label>Repeat</label>
+      <div class="recur-options">
+        <button type="button" class="recur-pill ${recPreset==='none'?'active':''}" data-rec="none" onclick="setRecurPreset('none')">No repeat</button>
+        <button type="button" class="recur-pill ${recPreset==='daily'?'active':''}" data-rec="daily" onclick="setRecurPreset('daily')">Daily</button>
+        <button type="button" class="recur-pill ${recPreset==='weekly'?'active':''}" data-rec="weekly" onclick="setRecurPreset('weekly')">Weekly</button>
+        <button type="button" class="recur-pill ${recPreset==='alternate'?'active':''}" data-rec="alternate" onclick="setRecurPreset('alternate')">Alternate days</button>
+        <button type="button" class="recur-pill ${recPreset==='custom'?'active':''}" data-rec="custom" onclick="setRecurPreset('custom')">Custom</button>
+      </div>
+      <div id="custom-days-row" style="display:${recPreset==='custom'?'block':'none'}">
+        <div class="day-toggles">
+          ${DAY_LABELS.map((lbl, i) => `
+            <button type="button" class="day-toggle ${customDays.includes(i)?'active':''}" data-day="${i}" onclick="toggleCustomDay(${i})">${lbl}</button>
+          `).join('')}
+        </div>
+        <div style="font-size:11px;color:var(--ink-muted);margin-top:6px">Pick the days of the week this task should appear.</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Reminder time (optional)</label>
+      <input type="time" id="et-reminder" value="${t.reminder || ''}" />
+      <div style="font-size:11px;color:var(--ink-muted);margin-top:4px">${state.remindersEnabled ? 'Daily reminders are on.' : 'Turn on daily reminders to get notified — see the Remind button on the Tasks page.'}</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-secondary" style="color:var(--rose)" onclick="if(confirm('Delete this task?')){deleteTask('${id}'); closeModal();}">Delete</button>
+      <button class="btn-primary" onclick="saveTaskEdit('${id}')">Save</button>
+    </div>
+  `, 'modal-wide');
+  setTimeout(() => document.getElementById('et-title')?.focus(), 50);
+}
+
+let _currentRecPreset = 'none';
+function setRecurPreset(preset) {
+  _currentRecPreset = preset;
+  document.querySelectorAll('.recur-pill').forEach(el => {
+    el.classList.toggle('active', el.dataset.rec === preset);
+  });
+  const customRow = document.getElementById('custom-days-row');
+  if (customRow) customRow.style.display = (preset === 'custom') ? 'block' : 'none';
+}
+
+function toggleCustomDay(d) {
+  const days = window._editTaskCustomDays || [];
+  const idx = days.indexOf(d);
+  if (idx >= 0) days.splice(idx, 1);
+  else days.push(d);
+  window._editTaskCustomDays = days;
+  document.querySelectorAll('.day-toggle').forEach(el => {
+    const di = parseInt(el.dataset.day);
+    el.classList.toggle('active', days.includes(di));
+  });
+}
+
+function saveTaskEdit(id) {
+  const t = state.tasks.find(x => x.id === id);
+  if (!t) return;
+  const title = document.getElementById('et-title').value.trim();
+  if (!title) { showToast('Title required'); return; }
+
+  t.title = title;
+  t.description = document.getElementById('et-desc').value.trim();
+  t.priority = document.getElementById('et-priority').value || null;
+  t.due = document.getElementById('et-due').value || null;
+  t.projectId = document.getElementById('et-project').value || null;
+  t.reminder = document.getElementById('et-reminder').value || null;
+
+  // Build recurrence
+  // Re-read which pill is active at save time
+  const activePill = document.querySelector('.recur-pill.active');
+  const preset = activePill ? activePill.dataset.rec : 'none';
+  if (preset === 'none') t.recurrence = null;
+  else if (preset === 'daily') t.recurrence = 'daily';
+  else if (preset === 'weekly') t.recurrence = 'weekly';
+  else if (preset === 'alternate') t.recurrence = 'alternate';
+  else if (preset === 'custom') {
+    const days = (window._editTaskCustomDays || []).slice().sort((a,b) => a-b);
+    if (days.length === 0) {
+      showToast('Pick at least one day for custom repeat');
+      return;
+    }
+    t.recurrence = { type: 'custom', days };
+  }
+
+  // If a task switched from non-recurring to recurring, the boolean done state
+  // is no longer meaningful, so reset.
+  if (t.recurrence) { t.done = false; t.completedAt = null; }
+
+  saveAll();
+  closeModal();
+  showToast('Task updated');
+  render();
+}
+
+// ============ IDEA DETAIL + EDIT ============
+function openIdeaDetail(id) {
+  const i = state.ideas.find(x => x.id === id);
+  if (!i) return;
+  const bucket = i.bucketId ? state.buckets.find(b => b.id === i.bucketId) : null;
+  const linkedProject = i.convertedToProjectId ? state.projects.find(p => p.id === i.convertedToProjectId) : null;
+  const notes = i.notes || [];
+  const displayTitle = i.title || i.content.slice(0, 80) + (i.content.length > 80 ? '...' : '');
+
+  showModal(`
+    <h3 style="margin-bottom:6px">💡 ${escapeHtml(displayTitle)}</h3>
+    <div style="font-size:11px;color:var(--ink-muted);margin-bottom:14px;letter-spacing:0.04em;text-transform:uppercase">
+      ${bucket ? `In <strong style="color:var(--ink-soft);text-transform:none;font-weight:600">${escapeHtml(bucket.title)}</strong> · ` : 'Unbucketed · '}
+      Captured ${fmtDateTime(i.created)}
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">The Spark
+        <button class="ds-action" onclick="closeModal(); editIdea('${i.id}')">Edit</button>
+      </div>
+      <div class="detail-desc">${escapeHtml(i.content)}</div>
+    </div>
+
+    ${i.description ? `
+      <div class="detail-section">
+        <div class="detail-section-title">Description / Summary</div>
+        <div class="detail-desc">${escapeHtml(i.description)}</div>
+      </div>
+    ` : ''}
+
+    ${linkedProject ? `
+      <div class="detail-section">
+        <div class="detail-section-title">Connected Project</div>
+        <div class="linked-item" onclick="closeModal(); openProject('${linkedProject.id}')">
+          <div>
+            <div class="linked-item-title">📁 ${escapeHtml(linkedProject.title)}</div>
+            <div class="linked-item-meta">${linkedProject.type === 'long' ? 'Long Term' : 'Short Term'}${linkedProject.deadline ? ' · due ' + fmtDate(linkedProject.deadline) : ''}</div>
+          </div>
+          <button class="linked-remove" onclick="event.stopPropagation(); unlinkIdeaProject('${i.id}')">unlink</button>
+        </div>
+      </div>
+    ` : ''}
+
+    <div class="detail-section">
+      <div class="detail-section-title">Notes
+        <button class="ds-action" onclick="addIdeaNoteFromDetail('${i.id}')">+ Add</button>
+      </div>
+      <textarea id="idea-note-input" placeholder="Add details, references, fragments... (Ctrl+Enter to save)" style="width:100%;font-size:13px;padding:10px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--ink);resize:vertical;min-height:70px;margin-bottom:10px;font-family:inherit"></textarea>
+      ${notes.length === 0
+        ? `<div style="font-size:12px;color:var(--ink-muted);font-style:italic">No notes yet. Build the idea out as it grows.</div>`
+        : notes.map((n, idx) => `
+          <div class="note-card" style="margin-bottom:8px">
+            <div class="note-header">
+              <div class="note-date">${fmtDateTime(n.created)}</div>
+              <div class="note-actions">
+                <button class="note-action danger" onclick="deleteIdeaNote('${i.id}', ${idx})">Delete</button>
+              </div>
+            </div>
+            <div class="note-content">${escapeHtml(n.content)}</div>
+          </div>
+        `).join('')
+      }
+    </div>
+
+    <div class="modal-actions" style="margin-top:24px;flex-wrap:wrap">
+      <button class="btn-secondary" onclick="closeModal()">Close</button>
+      <button class="btn-secondary" onclick="moveIdea('${i.id}')">Move bucket</button>
+      ${linkedProject
+        ? `<button class="btn-secondary" onclick="closeModal(); openConnectIdeaToProject('${i.id}')">Change link</button>`
+        : `<button class="btn-secondary" onclick="closeModal(); openConnectIdeaToProject('${i.id}')">Link to project</button>`
+      }
+      <button class="btn-primary" onclick="closeModal(); openConvertIdeaModal('${i.id}')">→ Convert to Project</button>
+      <button class="btn-secondary" onclick="closeModal(); editIdea('${i.id}')">Edit</button>
+    </div>
+  `, 'modal-wide');
+  setTimeout(() => {
+    const ta = document.getElementById('idea-note-input');
+    if (ta) {
+      ta.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') addIdeaNoteFromDetail(i.id);
+      });
+    }
+  }, 50);
+}
+
+function addIdeaNoteFromDetail(ideaId) {
+  const ta = document.getElementById('idea-note-input');
+  if (!ta) return;
+  const content = ta.value.trim();
+  if (!content) return;
+  const i = state.ideas.find(x => x.id === ideaId);
+  if (!i) return;
+  i.notes = i.notes || [];
+  i.notes.unshift({ content, created: Date.now() });
+  saveAll();
+  closeModal();
+  openIdeaDetail(ideaId);
+}
+
+function deleteIdeaNote(ideaId, idx) {
+  const i = state.ideas.find(x => x.id === ideaId);
+  if (!i || !i.notes) return;
+  i.notes.splice(idx, 1);
+  saveAll();
+  closeModal();
+  openIdeaDetail(ideaId);
+}
+
+function editIdea(id) {
+  const i = state.ideas.find(x => x.id === id);
+  if (!i) return;
+  showModal(`
+    <h3>Edit Idea</h3>
+    <div class="idea-edit-form">
+      <div class="field">
+        <label>Title (optional)</label>
+        <input id="ei-title" value="${escapeHtml(i.title || '')}" placeholder="A short name for the idea" />
+      </div>
+      <div class="field">
+        <label>The Spark</label>
+        <textarea id="ei-content" style="min-height:80px">${escapeHtml(i.content)}</textarea>
+      </div>
+      <div class="field">
+        <label>Description / Summary</label>
+        <textarea id="ei-desc" style="min-height:100px" placeholder="Flesh it out: what is it, why does it matter, who is it for...">${escapeHtml(i.description || '')}</textarea>
+      </div>
+      <div class="field">
+        <label>Bucket</label>
+        <select id="ei-bucket">
+          <option value="">No bucket</option>
+          ${state.buckets.map(b => `<option value="${b.id}" ${i.bucketId===b.id?'selected':''}>${escapeHtml(b.title)}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-secondary" style="color:var(--rose)" onclick="if(confirm('Delete this idea?')){deleteIdea('${id}'); closeModal();}">Delete</button>
+      <button class="btn-primary" onclick="saveIdeaEdit('${id}')">Save</button>
+    </div>
+  `, 'modal-wide');
+  setTimeout(() => document.getElementById('ei-title')?.focus(), 50);
+}
+
+function saveIdeaEdit(id) {
+  const i = state.ideas.find(x => x.id === id);
+  if (!i) return;
+  const content = document.getElementById('ei-content').value.trim();
+  if (!content) { showToast('The spark cannot be empty'); return; }
+  i.title = document.getElementById('ei-title').value.trim();
+  i.content = content;
+  i.description = document.getElementById('ei-desc').value.trim();
+  i.bucketId = document.getElementById('ei-bucket').value || null;
+  saveAll();
+  closeModal();
+  showToast('Idea updated');
+  render();
+}
+
+// ----- Convert idea to project -----
+function openConvertIdeaModal(ideaId) {
+  const i = state.ideas.find(x => x.id === ideaId);
+  if (!i) return;
+  const suggested = i.title || i.content.slice(0, 60);
+  showModal(`
+    <h3>Convert idea to project</h3>
+    <div style="font-size:13px;color:var(--ink-soft);margin-bottom:14px;line-height:1.6">
+      Promote <strong>${escapeHtml(suggested)}</strong> into a real project. The idea stays in your Idea Center, but a link will connect them so you remember where this came from.
+    </div>
+    <div class="field"><label>Project title</label><input id="ci-title" value="${escapeHtml(suggested)}" /></div>
+    <div class="field"><label>Description</label><textarea id="ci-desc" placeholder="What is this project really about?">${escapeHtml(i.description || '')}</textarea></div>
+    <div class="field-row">
+      <div class="field"><label>Type</label>
+        <select id="ci-type">
+          <option value="long">Long Term</option>
+          <option value="short">Short Term</option>
+        </select>
+      </div>
+      <div class="field"><label>Deadline (optional)</label><input type="date" id="ci-deadline" /></div>
+    </div>
+    <div class="field"><label>Time estimate (optional)</label><input id="ci-estimate" placeholder="e.g. 3 weeks" /></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal(); openIdeaDetail('${ideaId}')">Cancel</button>
+      <button class="btn-primary" onclick="confirmConvertIdea('${ideaId}')">Create Project</button>
+    </div>
+  `);
+  setTimeout(() => document.getElementById('ci-title')?.focus(), 50);
+}
+
+function confirmConvertIdea(ideaId) {
+  const i = state.ideas.find(x => x.id === ideaId);
+  if (!i) return;
+  const title = document.getElementById('ci-title').value.trim();
+  if (!title) { showToast('Project title required'); return; }
+  const desc = document.getElementById('ci-desc').value.trim();
+  const type = document.getElementById('ci-type').value;
+  const deadline = document.getElementById('ci-deadline').value || null;
+  const estimate = document.getElementById('ci-estimate').value.trim() || null;
+
+  const newProject = {
+    id: uid(),
+    title,
+    description: desc,
+    type,
+    parentId: null,
+    deadline,
+    estimate,
+    notes: [],
+    links: [],
+    satisfaction: null,
+    workLog: [],
+    created: Date.now(),
+    fromIdeaId: ideaId
+  };
+  // Attach the original idea content as the project's first note
+  newProject.notes.unshift({
+    content: `Origin idea: ${i.content}` + (i.description ? `\n\nSummary: ${i.description}` : ''),
+    created: Date.now()
+  });
+  state.projects.push(newProject);
+  i.convertedToProjectId = newProject.id;
+  saveAll();
+  closeModal();
+  showToast('Project created from idea');
+  // Send the user into the new project so it feels like progress
+  openProject(newProject.id);
+}
+
+// ----- Connect idea to existing project -----
+function openConnectIdeaToProject(ideaId) {
+  const i = state.ideas.find(x => x.id === ideaId);
+  if (!i) return;
+  if (state.projects.length === 0) {
+    showToast('No projects yet — create one first');
+    openIdeaDetail(ideaId);
+    return;
+  }
+  showModal(`
+    <h3>Link idea to a project</h3>
+    <div style="font-size:13px;color:var(--ink-soft);margin-bottom:14px">
+      Connect <strong>${escapeHtml(i.title || i.content.slice(0, 60))}</strong> to an existing project. This idea will show up on that project page as inspiration.
+    </div>
+    <div class="field">
+      <input id="link-proj-search" placeholder="Search projects..." oninput="filterProjLinkPicker()" />
+    </div>
+    <div id="proj-link-list" style="max-height:300px;overflow-y:auto">
+      ${state.projects.filter(p => !p.parentId).map(p => `
+        <div class="linked-item proj-link-row" data-search="${escapeHtml(p.title.toLowerCase())}" onclick="confirmLinkIdeaProject('${ideaId}', '${p.id}')">
+          <div>
+            <div class="linked-item-title">📁 ${escapeHtml(p.title)}</div>
+            <div class="linked-item-meta">${p.type === 'long' ? 'Long Term' : 'Short Term'}${p.deadline ? ' · due ' + fmtDate(p.deadline) : ''}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal(); openIdeaDetail('${ideaId}')">Back</button>
+    </div>
+  `, 'modal-wide');
+  setTimeout(() => document.getElementById('link-proj-search')?.focus(), 50);
+}
+
+function filterProjLinkPicker() {
+  const q = (document.getElementById('link-proj-search')?.value || '').toLowerCase().trim();
+  document.querySelectorAll('.proj-link-row').forEach(el => {
+    const data = el.dataset.search || '';
+    el.style.display = (!q || data.includes(q)) ? '' : 'none';
+  });
+}
+
+function confirmLinkIdeaProject(ideaId, projectId) {
+  const i = state.ideas.find(x => x.id === ideaId);
+  const p = state.projects.find(x => x.id === projectId);
+  if (!i || !p) return;
+  i.convertedToProjectId = projectId;
+  // Add a note on the project to mark the connection (only if not already there)
+  p.notes = p.notes || [];
+  const marker = `Linked idea: ${i.content}`;
+  if (!p.notes.some(n => n.content === marker)) {
+    p.notes.unshift({ content: marker, created: Date.now() });
+  }
+  saveAll();
+  closeModal();
+  showToast('Linked to project');
+  openIdeaDetail(ideaId);
+}
+
+function unlinkIdeaProject(ideaId) {
+  const i = state.ideas.find(x => x.id === ideaId);
+  if (!i) return;
+  i.convertedToProjectId = null;
+  saveAll();
+  closeModal();
+  openIdeaDetail(ideaId);
+}
+
 // ============ RENDER ============
 function render() {
   updateCounts();
@@ -2207,8 +3323,14 @@ function render() {
 }
 
 function updateCounts() {
+  const taskActiveCount = state.tasks.filter(t => {
+    if (t.recurrence) {
+      return isRecurringDueOn(t, new Date()) && !isRecurringDoneOn(t.id, todayStr());
+    }
+    return !t.done;
+  }).length;
   const els = {
-    'nav-tasks-count': state.tasks.filter(t => !t.done).length,
+    'nav-tasks-count': taskActiveCount,
     'nav-long-count': state.projects.filter(p => p.type === 'long' && !p.parentId).length,
     'nav-short-count': state.projects.filter(p => p.type === 'short' && !p.parentId).length,
     'nav-learning-count': state.learning.length,
@@ -2257,9 +3379,11 @@ function updateMobileTitle() {
 
 // ============ DASHBOARD ============
 function renderDashboard() {
-  const openTasks = state.tasks.filter(t => !t.done);
+  const openTasks = state.tasks.filter(t => !t.done && !t.recurrence);
   const todayTasks = openTasks.filter(t => t.due && new Date(t.due).toDateString() === new Date().toDateString());
   const overdueTasks = openTasks.filter(t => isOverdue(t.due));
+  // Recurring tasks scheduled today that are not yet ticked off
+  const recurringToday = state.tasks.filter(t => t.recurrence && isRecurringDueOn(t, new Date()) && !isRecurringDoneOn(t.id, todayStr()));
   const upcomingProjects = state.projects.filter(p => p.deadline && !isOverdue(p.deadline) && !p.parentId).sort((a,b) => new Date(a.deadline) - new Date(b.deadline)).slice(0,3);
   const recentIdeas = [...state.ideas].sort((a,b) => b.created - a.created).slice(0, 3);
 
@@ -2283,8 +3407,8 @@ function renderDashboard() {
     <div class="stats-grid">
       <div class="stat-card accent clickable" onclick="setView('tasks')">
         <div class="stat-label">Due Today</div>
-        <div class="stat-value">${todayTasks.length}</div>
-        <div class="stat-sub">on your plate</div>
+        <div class="stat-value">${todayTasks.length + recurringToday.length}</div>
+        <div class="stat-sub">${recurringToday.length > 0 ? `incl. ${recurringToday.length} routine${recurringToday.length===1?'':'s'}` : 'on your plate'}</div>
       </div>
       <div class="stat-card rose clickable" onclick="setView('tasks')">
         <div class="stat-label">Overdue</div>
@@ -2357,9 +3481,9 @@ function renderDashboard() {
         <button onclick="setView('tasks')">View all →</button>
       </div>
     </div>
-    ${todayTasks.length === 0 && overdueTasks.length === 0
+    ${todayTasks.length === 0 && overdueTasks.length === 0 && recurringToday.length === 0
       ? `<div class="empty"><div class="empty-icon">✦</div><p>Nothing pressing today.</p></div>`
-      : `<div class="task-list">${[...overdueTasks, ...todayTasks].slice(0, 6).map(renderTaskRow).join('')}</div>`
+      : `<div class="task-list">${[...overdueTasks, ...recurringToday, ...todayTasks].slice(0, 6).map(renderTaskRow).join('')}</div>`
     }
 
     ${recentIdeas.length > 0 ? `
@@ -2397,6 +3521,9 @@ function attachDashboardHandlers() {
   if (qi) qi.addEventListener('keypress', (e) => { if (e.key === 'Enter') quickCaptureIdea(); });
   document.querySelectorAll('[data-task]').forEach(el => {
     el.addEventListener('click', () => toggleTask(el.dataset.task));
+  });
+  document.querySelectorAll('[data-task-detail]').forEach(el => {
+    el.addEventListener('click', () => openTaskDetail(el.dataset.taskDetail));
   });
   document.querySelectorAll('[data-project]').forEach(el => {
     el.addEventListener('click', () => openProject(el.dataset.project));
@@ -2437,22 +3564,35 @@ function quickCaptureIdea() {
 
 // ============ TASKS ============
 function renderTasks() {
-  const open = state.tasks.filter(t => !t.done).sort((a,b) => {
+  // For non-recurring: open = !done. For recurring: always "open" but with today's status.
+  const recurring = state.tasks.filter(t => t.recurrence);
+  const nonRecOpen = state.tasks.filter(t => !t.recurrence && !t.done).sort((a,b) => {
     if (a.due && b.due) return new Date(a.due) - new Date(b.due);
     if (a.due) return -1;
     if (b.due) return 1;
     const pri = {high:0, med:1, low:2};
     return (pri[a.priority]||3) - (pri[b.priority]||3);
   });
-  const done = state.tasks.filter(t => t.done);
+  const open = nonRecOpen;
+  const done = state.tasks.filter(t => !t.recurrence && t.done);
+
+  // Recurring tasks active today (sorted with done-today at end)
+  const recurringToday = recurring.filter(t => isRecurringDueOn(t, new Date()));
+  recurringToday.sort((a, b) => {
+    const aDone = isRecurringDoneOn(a.id, todayStr());
+    const bDone = isRecurringDoneOn(b.id, todayStr());
+    return Number(aDone) - Number(bDone);
+  });
+  const recurringOther = recurring.filter(t => !isRecurringDueOn(t, new Date()));
 
   return `
     <div class="header">
       <div class="header-left">
         <h2>Tasks</h2>
-        <p class="greeting">${open.length} open · ${done.length} done</p>
+        <p class="greeting">${open.length} open · ${recurringToday.length} routine${recurringToday.length===1?'':'s'} today · ${done.length} done</p>
       </div>
       <div class="header-actions">
+        <button class="btn-secondary" onclick="openReminderSettings()" title="Daily reminder settings">${state.remindersEnabled ? '🔔' : '🔕'} Remind</button>
         <button class="btn-secondary btn-ai" onclick="openAIExport('tasks')">↗ Send to AI</button>
       </div>
     </div>
@@ -2477,10 +3617,29 @@ function renderTasks() {
       </div>
     </div>
 
-    ${open.length === 0
+    ${recurringToday.length > 0 ? `
+      <div class="section-title" style="margin-top: 24px;">
+        Today's Routines
+        <div class="section-title-actions"><span style="font-size:11px;color:var(--ink-muted);font-weight:500">${recurringToday.filter(t=>isRecurringDoneOn(t.id, todayStr())).length}/${recurringToday.length} done</span></div>
+      </div>
+      <div class="task-list">${recurringToday.map(renderTaskRow).join('')}</div>
+    ` : ''}
+
+    ${open.length === 0 && recurringToday.length === 0
       ? `<div class="empty"><div class="empty-icon">✓</div><p>All caught up.</p></div>`
-      : `<div class="task-list">${open.map(renderTaskRow).join('')}</div>`
+      : open.length > 0 ? `
+        <div class="section-title" style="margin-top: ${recurringToday.length > 0 ? '24px' : '0'}">One-off tasks</div>
+        <div class="task-list">${open.map(renderTaskRow).join('')}</div>
+      ` : ''
     }
+
+    ${recurringOther.length > 0 ? `
+      <div class="section-title" style="margin-top: 32px;">
+        Other Routines
+        <div class="section-title-actions"><span style="font-size:11px;color:var(--ink-muted);font-weight:500">not scheduled today</span></div>
+      </div>
+      <div class="task-list">${recurringOther.map(renderTaskRow).join('')}</div>
+    ` : ''}
 
     ${done.length > 0 ? `
       <div class="section-title" style="margin-top: 32px;">
@@ -2498,25 +3657,34 @@ function renderTaskRow(t, opts = {}) {
   const project = t.projectId ? state.projects.find(p => p.id === t.projectId) : null;
   const stats = workLogStats(t.workLog);
   const showActions = opts.showActions !== false; // default true
+
+  // For recurring tasks, "done" = ticked off for today
+  const isRec = !!t.recurrence;
+  const today = todayStr();
+  const visuallyDone = isRec ? isRecurringDoneOn(t.id, today) : t.done;
+
   return `
-    <div class="task ${t.done ? 'done' : ''}">
-      <div class="checkbox ${t.done ? 'checked' : ''}" data-task="${t.id}"></div>
-      <div class="task-content">
+    <div class="task ${visuallyDone ? 'done' : ''}">
+      <div class="checkbox ${visuallyDone ? 'checked' : ''}" data-task="${t.id}" onclick="event.stopPropagation()"></div>
+      <div class="task-content" data-task-detail="${t.id}">
         <div class="task-title">${escapeHtml(t.title)}</div>
         <div class="task-meta">
           ${t.priority ? `<span class="task-tag tag-priority-${t.priority}">${t.priority === 'med' ? 'medium' : t.priority}</span>` : ''}
           ${project ? `<span class="task-tag tag-project">${escapeHtml(project.title)}</span>` : ''}
-          ${t.due ? `<span class="task-tag tag-due ${isOverdue(t.due) && !t.done ? 'overdue' : ''}">${fmtDate(t.due)}${isOverdue(t.due) && !t.done ? ' · overdue' : ''}</span>` : ''}
+          ${t.due && !isRec ? `<span class="task-tag tag-due ${isOverdue(t.due) && !t.done ? 'overdue' : ''}">${fmtDate(t.due)}${isOverdue(t.due) && !t.done ? ' · overdue' : ''}</span>` : ''}
+          ${isRec ? `<span class="task-tag tag-recur" title="${escapeHtml(recurrenceLabel(t.recurrence))}">↻ ${escapeHtml(recurrenceLabel(t.recurrence))}</span>` : ''}
+          ${t.reminder ? `<span class="task-tag tag-reminder" title="Reminder time">⏰ ${escapeHtml(t.reminder)}</span>` : ''}
           ${t.satisfaction != null ? `<span class="satisfaction-badge ${satisfactionClass(t.satisfaction)}" title="Satisfaction">★ ${t.satisfaction}/10</span>` : ''}
           ${stats.count > 0 ? `<span class="task-tag" style="background:var(--sage-soft);color:var(--sage)" title="Work sessions">⏱ ${stats.count}d${stats.streak > 1 ? ` · 🔥${stats.streak}` : ''}</span>` : ''}
+          ${(t.linkedTasks && t.linkedTasks.length > 0) ? `<span class="task-tag" style="background:var(--indigo-soft);color:var(--indigo)" title="Linked tasks">⚯ ${t.linkedTasks.length}</span>` : ''}
         </div>
       </div>
       ${showActions ? `
-        <div class="note-actions" style="display:flex;gap:2px;align-items:center">
+        <div class="note-actions" style="display:flex;gap:2px;align-items:center" onclick="event.stopPropagation()">
           <button class="note-action" onclick="event.stopPropagation();openWorkLogModal('task','${t.id}')" title="Log work">⏱</button>
           <button class="note-action" onclick="event.stopPropagation();openSatisfactionModal('task','${t.id}')" title="Rate satisfaction">★</button>
-          <button class="note-action" onclick="event.stopPropagation();openAIExport('task:${t.id}')" title="Export to AI">↗</button>
-          <button class="task-delete" data-del-task="${t.id}" title="Delete">
+          <button class="note-action" onclick="event.stopPropagation();openTaskDetail('${t.id}')" title="Edit / details">✎</button>
+          <button class="task-delete" data-del-task="${t.id}" title="Delete" onclick="event.stopPropagation()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
           </button>
         </div>
@@ -2528,6 +3696,9 @@ function renderTaskRow(t, opts = {}) {
 function attachTaskHandlers() {
   document.querySelectorAll('[data-task]').forEach(el => {
     el.addEventListener('click', () => toggleTask(el.dataset.task));
+  });
+  document.querySelectorAll('[data-task-detail]').forEach(el => {
+    el.addEventListener('click', () => openTaskDetail(el.dataset.taskDetail));
   });
   document.querySelectorAll('[data-del-task]').forEach(el => {
     el.addEventListener('click', (e) => { e.stopPropagation(); deleteTask(el.dataset.delTask); });
@@ -2545,9 +3716,14 @@ function addTask() {
   if (!title) return;
   state.tasks.unshift({
     id: uid(), title,
+    description: '',
     priority: document.getElementById('task-priority').value || null,
     projectId: document.getElementById('task-project').value || null,
     due: document.getElementById('task-due').value || null,
+    recurrence: null,
+    reminder: null,
+    linkedTasks: [],
+    notes: [],
     done: false, created: Date.now(),
     satisfaction: null, workLog: []
   });
@@ -2556,6 +3732,22 @@ function addTask() {
 function toggleTask(id) {
   const t = state.tasks.find(t => t.id === id);
   if (!t) return;
+  // Recurring tasks: toggle today's completion record instead of "done forever"
+  if (t.recurrence) {
+    const today = todayStr();
+    const wasDone = isRecurringDoneOn(t.id, today);
+    setRecurringDone(t.id, today, !wasDone);
+    // Also auto-log a quick work session on completion (for streak tracking)
+    if (!wasDone) {
+      t.workLog = t.workLog || [];
+      const already = t.workLog.find(e => e.date === today);
+      if (!already) {
+        t.workLog.unshift({ date: today, note: '', left: '', mode: 'simple', logged: Date.now() });
+      }
+    }
+    saveAll(); render();
+    return;
+  }
   t.done = !t.done;
   t.completedAt = t.done ? Date.now() : null;
   saveAll(); render();
@@ -2790,6 +3982,9 @@ function attachDetailHandlers() {
   document.querySelectorAll('[data-task]').forEach(el => {
     el.addEventListener('click', () => toggleTask(el.dataset.task));
   });
+  document.querySelectorAll('[data-task-detail]').forEach(el => {
+    el.addEventListener('click', () => openTaskDetail(el.dataset.taskDetail));
+  });
   document.querySelectorAll('[data-del-task]').forEach(el => {
     el.addEventListener('click', (e) => { e.stopPropagation(); deleteTask(el.dataset.delTask); });
   });
@@ -2929,6 +4124,34 @@ function deleteProject(id) {
 }
 
 // ============ IDEAS ============
+function renderIdeaRow(i) {
+  const hasNotes = (i.notes || []).length > 0;
+  const linked = !!i.convertedToProjectId;
+  const displayBody = i.title
+    ? `<div style="font-weight:600;color:var(--ink);font-size:13px;margin-bottom:3px">${escapeHtml(i.title)}</div><div style="font-size:13px;color:var(--ink-soft);line-height:1.5">${escapeHtml(i.content.slice(0, 200))}${i.content.length > 200 ? '...' : ''}</div>`
+    : `${escapeHtml(i.content.slice(0, 240))}${i.content.length > 240 ? '...' : ''}`;
+  const meta = [
+    fmtDateTime(i.created),
+    hasNotes ? `📝 ${i.notes.length}` : '',
+    linked ? '🔗 linked' : '',
+    i.description ? '📄 has summary' : ''
+  ].filter(Boolean).join(' · ');
+
+  return `
+    <div class="idea-item" onclick="openIdeaDetail('${i.id}')">
+      <div class="idea-content">
+        ${displayBody}
+        <div class="idea-date">${meta}</div>
+      </div>
+      <div class="idea-actions" onclick="event.stopPropagation()">
+        <button class="note-action" onclick="event.stopPropagation();openIdeaDetail('${i.id}')" title="Open">✎</button>
+        <button class="note-action" onclick="event.stopPropagation();moveIdea('${i.id}')" title="Move bucket">↔</button>
+        <button class="note-action danger" onclick="event.stopPropagation();if(confirm('Delete this idea?'))deleteIdea('${i.id}')" title="Delete">×</button>
+      </div>
+    </div>
+  `;
+}
+
 function renderIdeas() {
   const unbucketed = state.ideas.filter(i => !i.bucketId);
   const filter = state.ideaFilter || 'all';
@@ -3001,18 +4224,7 @@ function renderUnbucketedOnly(unbucketed) {
         </div>
       </div>
       <div class="bucket-content">
-        ${unbucketed.sort((a,b) => b.created - a.created).map(i => `
-          <div class="idea-item">
-            <div class="idea-content">
-              ${escapeHtml(i.content)}
-              <div class="idea-date">${fmtDateTime(i.created)}</div>
-            </div>
-            <div class="idea-actions">
-              <button class="note-action" onclick="moveIdea('${i.id}')">Move to bucket</button>
-              <button class="note-action danger" onclick="deleteIdea('${i.id}')">×</button>
-            </div>
-          </div>
-        `).join('')}
+        ${unbucketed.sort((a,b) => b.created - a.created).map(i => renderIdeaRow(i)).join('')}
       </div>
     </div>
   `;
@@ -3048,18 +4260,7 @@ function renderBucketSection(b) {
       <div class="bucket-content ${collapsed?'collapsed':''}">
         ${ideas.length === 0
           ? `<div style="font-size:12px;color:var(--ink-muted);font-style:italic;padding:8px 0">No ideas in this bucket yet.</div>`
-          : ideas.map(i => `
-            <div class="idea-item">
-              <div class="idea-content">
-                ${escapeHtml(i.content)}
-                <div class="idea-date">${fmtDateTime(i.created)}</div>
-              </div>
-              <div class="idea-actions">
-                <button class="note-action" onclick="moveIdea('${i.id}')">Move</button>
-                <button class="note-action danger" onclick="deleteIdea('${i.id}')">×</button>
-              </div>
-            </div>
-          `).join('')
+          : ideas.map(i => renderIdeaRow(i)).join('')
         }
       </div>
     </div>
@@ -3865,11 +5066,15 @@ function downloadAIExport(scope) {
 }
 
 // ============ MODAL ============
-function showModal(html) {
+function showModal(html, extraClass) {
+  // Close any existing modal first to avoid stacking
+  const existing = document.getElementById('modal-overlay');
+  if (existing) existing.remove();
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
   overlay.id = 'modal-overlay';
-  overlay.innerHTML = `<div class="modal" onclick="event.stopPropagation()">${html}</div>`;
+  const cls = extraClass ? `modal ${extraClass}` : 'modal';
+  overlay.innerHTML = `<div class="${cls}" onclick="event.stopPropagation()">${html}</div>`;
   overlay.addEventListener('click', closeModal);
   document.body.appendChild(overlay);
 }
@@ -3942,7 +5147,18 @@ Object.assign(window, {
   signInToGoogle, signOutGoogle,
   openMobileMenu, closeMobileMenu, handleFab,
   openWorkLogModal, quickLog, saveWorkLog, deleteWorkLogEntry,
-  openSatisfactionModal, setRating, closeModalAndRender
+  openSatisfactionModal, setRating, closeModalAndRender,
+  // v5: recurrence + reminders
+  openReminderSettings, toggleReminders, saveReminderTime,
+  // v5: task detail + edit
+  openTaskDetail, editTask, saveTaskEdit, setRecurPreset, toggleCustomDay,
+  openLinkTaskPicker, confirmLinkTask, unlinkTask, filterLinkPicker,
+  addTaskNoteFromDetail, deleteTaskNote,
+  // v5: idea detail + edit + convert
+  openIdeaDetail, editIdea, saveIdeaEdit,
+  openConvertIdeaModal, confirmConvertIdea,
+  openConnectIdeaToProject, confirmLinkIdeaProject, unlinkIdeaProject,
+  filterProjLinkPicker, addIdeaNoteFromDetail, deleteIdeaNote
 });
 
 // Init
